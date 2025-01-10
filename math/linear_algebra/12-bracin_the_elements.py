@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 def np_elementwise(mat1, mat2):
+
+    
     """
     Perform element-wise addition, subtraction, multiplication, and division
     on two matrices (or a matrix and scalar) without using loops or conditionals.
@@ -16,6 +18,7 @@ def np_elementwise(mat1, mat2):
             - element-wise product
             - element-wise quotient
     """
+
 
     # Element-wise operations using NumPy (without loops or conditionals)
     add = mat1 + mat2

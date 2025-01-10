@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 def np_transpose(matrix):
+
+    
     """Transposes a numpy.ndarray.
 
     Args:
@@ -9,3 +11,4 @@ def np_transpose(matrix):
         numpy.ndarray: Transposed matrix.
     """
     return matrix.T
+
