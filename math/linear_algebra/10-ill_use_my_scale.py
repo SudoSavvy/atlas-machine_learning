@@ -2,8 +2,8 @@
 """
 Module for calculating the shape of a NumPy ndarray.
 
-This module provides a function `np_shape` that returns the shape of a given 
-NumPy matrix as a tuple. The shape describes the number of rows and columns 
+This module provides a function `np_shape` that returns the shape of a given
+NumPy matrix as a tuple. The shape describes the number of rows and columns
 in a 2D matrix or the dimensions of an N-dimensional array.
 
 Example:
@@ -24,4 +24,3 @@ def np_shape(matrix):
         tuple: Shape of the matrix as a tuple of integers.
     """
     return matrix.shape
-
