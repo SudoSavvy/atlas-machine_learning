@@ -11,19 +11,16 @@ def scatter():
     y += 180
 
     # Create the scatter plot
-    plt.scatter(x, y, color='magenta', s=10)
+    plt.scatter(x, y, color='magenta', s=1)  # Ensure point size matches reference
 
     # Set the title and labels
     plt.title("Men's Height vs Weight")
     plt.xlabel("Height (in)")
     plt.ylabel("Weight (lbs)")
 
-    # Fix the axis limits (may be required for exact match)
+    # Set the axis limits to match the example
     plt.xlim(55, 80)
     plt.ylim(165, 195)
 
-    # Standardize the layout to avoid issues
-    plt.tight_layout()
-
-    # Show the plot
+    # Display the plot
     plt.show()
