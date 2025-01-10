@@ -10,17 +10,20 @@ def scatter():
     x, y = np.random.multivariate_normal(mean, cov, 2000).T
     y += 180
 
-    # Create the scatter plot
-    plt.scatter(x, y, color='magenta', s=1)  # Ensure point size matches reference
+    # Create the scatter plot with the correct marker size and color
+    plt.scatter(x, y, c='magenta', s=10)  # Match point size and color
 
     # Set the title and labels
     plt.title("Men's Height vs Weight")
     plt.xlabel("Height (in)")
     plt.ylabel("Weight (lbs)")
 
-    # Set the axis limits to match the example
+    # Set exact axis limits
     plt.xlim(55, 80)
     plt.ylim(165, 195)
+
+    # Use a default figure size to avoid scaling issues
+    plt.gcf().set_size_inches(6.4, 4.8)
 
     # Display the plot
     plt.show()
