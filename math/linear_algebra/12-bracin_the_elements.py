@@ -17,11 +17,9 @@ Example:
 """
 
 def np_elementwise(mat1, mat2):
-
     """
     Perform element-wise addition, subtraction, multiplication,
-    and division
-    on two matrices (or a matrix and scalar)
+    and division on two matrices (or a matrix and scalar)
     without using loops or conditionals.
 
     Args:
