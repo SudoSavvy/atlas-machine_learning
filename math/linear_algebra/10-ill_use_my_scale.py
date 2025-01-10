@@ -12,8 +12,8 @@ Example:
     print(shape)  # Output: (2, 2)
 """
 
-def np_shape(matrix):
 
+def np_shape(matrix):
 
     """Calculates the shape of a numpy.ndarray.
 
