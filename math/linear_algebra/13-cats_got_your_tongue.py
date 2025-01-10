@@ -3,8 +3,8 @@
 Module for concatenating two matrices along a specific axis.
 
 This module provides a function to concatenate two matrices
-(numpy.ndarrays) 
-along a specific axis using numpy's concatenate function. 
+(numpy.ndarrays)
+along a specific axis using numpy's concatenate function.
 
 Example:
     mat1 = np.array([[1, 2, 3], [4, 5, 6]])
