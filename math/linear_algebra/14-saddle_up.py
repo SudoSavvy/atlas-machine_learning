@@ -14,6 +14,7 @@ Example:
     print(result)  # Output: [[19 22] [43 50]]
 """
 
+
 def np_matmul(mat1, mat2):
     """Performs matrix multiplication.
 
@@ -25,4 +26,3 @@ def np_matmul(mat1, mat2):
         numpy.ndarray: The result of the matrix multiplication.
     """
     return np.matmul(mat1, mat2)
-
