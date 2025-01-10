@@ -11,7 +11,7 @@ def scatter():
     y += 180
 
     # Create the scatter plot
-    plt.scatter(x, y, color='magenta', s=10)  # 'magenta' for points, s=10 for small size
+    plt.scatter(x, y, c='magenta', s=10)
 
     # Add labels and title
     plt.title("Men's Height vs Weight")
