@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def scatter():
+    # Generate the data
     mean = [69, 0]
     cov = [[15, 8], [8, 15]]
     np.random.seed(5)
@@ -10,12 +11,12 @@ def scatter():
     y += 180
 
     # Create the scatter plot
-    plt.scatter(x, y, color='magenta', s=10)
+    plt.scatter(x, y, color='magenta', s=10)  # 'magenta' for points, s=10 for small size
 
-    # Label axes and set the title
+    # Add labels and title
+    plt.title("Men's Height vs Weight")
     plt.xlabel("Height (in)")
     plt.ylabel("Weight (lbs)")
-    plt.title("Men's Height vs Weight")
 
-    # Show the plot
+    # Display the plot
     plt.show()
