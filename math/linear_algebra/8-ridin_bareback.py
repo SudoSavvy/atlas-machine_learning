@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
+"""
+This module performs matrix multiplication for two matrices.
 
+It contains a function `mat_mul` which takes two 2D matrices
+(lists of lists),
+multiplies them if they are compatible (i.e., the number of columns
+in the first
+matrix is equal to the number of rows in the second), and returns
+the resulting matrix.
+
+If the matrices are incompatible, the function returns None.
+
+Example:
+    mat1 = [[1, 2], [3, 4], [5, 6]]
+    mat2 = [[1, 2, 3, 4], [5, 6, 7, 8]]
+    print(mat_mul(mat1, mat2))  # Expected Output: [[11, 14, 17, 20]
+      [23, 30, 37, 44], [35, 46, 57, 68]]
+"""
 
 def mat_mul(mat1, mat2):
     """
