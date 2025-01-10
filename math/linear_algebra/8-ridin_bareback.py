@@ -18,6 +18,7 @@ Example:
       [23, 30, 37, 44], [35, 46, 57, 68]]
 """
 
+
 def mat_mul(mat1, mat2):
     """
     Multiplies two matrices.
