@@ -10,11 +10,12 @@ def mat_mul(mat1, mat2):
         mat2 (list of lists): The second matrix represented as a 2D list.
 
     Returns:
-        list of lists: The result of the matrix multiplication, or None if the matrices
+        list of lists: The result of the matrix multiplication
+          or None if the matrices
                        cannot be multiplied due to incompatible dimensions.
     """
-  
-    # Check if the number of columns in mat1 matches the number of rows in mat2
+
+# Check the number of columns in mat1 matches the number of rows in mat2
     if len(mat1[0]) != len(mat2):
         return None
 
