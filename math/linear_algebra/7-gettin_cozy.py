@@ -15,17 +15,18 @@ def cat_matrices2D(mat1, mat2, axis=0):
         # Concatenate columns row by row
         return [mat1[i] + mat2[i] for i in range(len(mat1))]
 
+
 if __name__ == "__main__":
     mat1 = [[1, 2], [3, 4]]
     mat2 = [[5, 6]]
     mat3 = [[7], [8]]
-    
+
     mat4 = cat_matrices2D(mat1, mat2)
     mat5 = cat_matrices2D(mat1, mat3, axis=1)
-    
+
     print(mat4)  # Expected: [[1, 2], [3, 4], [5, 6]]
     print(mat5)  # Expected: [[1, 2, 7], [3, 4, 8]]
-    
+
     # Show original matrices are unmodified
     mat1[0] = [9, 10]
     mat1[1].append(5)
