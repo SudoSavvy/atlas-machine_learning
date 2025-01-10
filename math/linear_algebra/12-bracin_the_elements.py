@@ -20,7 +20,6 @@ def np_elementwise(mat1, mat2):
             - element-wise quotient
     """
 
-
     # Element-wise operations using NumPy
     # (without loops or conditionals)
     add = mat1 + mat2
