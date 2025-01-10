@@ -2,9 +2,12 @@
 """
 Module for performing element-wise matrix operations.
 
-This module provides a function `np_elementwise` to perform element-wise addition,
-subtraction, multiplication, and division on two matrices (or a matrix and a scalar).
-The operations are performed using NumPy without using loops or conditional statements.
+This module provides a function `np_elementwise`
+to perform element-wise addition,
+subtraction, multiplication, and division on two matrices
+(or a matrix and a scalar).
+The operations are performed using NumPy without using loops
+or conditional statements.
 
 Example:
     mat1 = np.array([[1, 2], [3, 4]])
