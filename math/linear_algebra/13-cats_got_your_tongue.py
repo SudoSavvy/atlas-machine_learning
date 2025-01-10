@@ -2,7 +2,8 @@
 """
 Module for concatenating two matrices along a specific axis.
 
-This module provides a function to concatenate two matrices (numpy.ndarrays) 
+This module provides a function to concatenate two matrices
+(numpy.ndarrays) 
 along a specific axis using numpy's concatenate function. 
 
 Example:
