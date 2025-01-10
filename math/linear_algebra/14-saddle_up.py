@@ -12,8 +12,8 @@ Example:
     print(result)  # Output: [[19 22] [43 50]]
 """
 
-
 import numpy as np
+
 
 def np_matmul(mat1, mat2):
     """Performs matrix multiplication.
