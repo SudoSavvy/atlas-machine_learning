@@ -6,8 +6,8 @@ def np_elementwise(mat1, mat2):
     on two matrices (or a matrix and scalar) without using loops or conditionals.
 
     Args:
-        mat1: A 2D matrix (list of lists).
-        mat2: A 2D matrix (list of lists) or scalar value.
+        mat1: A 2D matrix (numpy.ndarray).
+        mat2: A 2D matrix (numpy.ndarray) or scalar value.
 
     Returns:
         A tuple containing:
@@ -17,16 +17,10 @@ def np_elementwise(mat1, mat2):
             - element-wise quotient
     """
 
-    # Element-wise addition
-    add = [[x + y for x, y in zip(row1, row2)] for row1, row2 in zip(mat1, mat2)]
-    
-    # Element-wise subtraction
-    sub = [[x - y for x, y in zip(row1, row2)] for row1, row2 in zip(mat1, mat2)]
-    
-    # Element-wise multiplication
-    mul = [[x * y for x, y in zip(row1, row2)] for row1, row2 in zip(mat1, mat2)]
-    
-    # Element-wise division
-    div = [[x / y for x, y in zip(row1, row2)] for row1, row2 in zip(mat1, mat2)]
+    # Element-wise operations using NumPy (without loops or conditionals)
+    add = mat1 + mat2
+    sub = mat1 - mat2
+    mul = mat1 * mat2
+    div = mat1 / mat2
 
     return add, sub, mul, div
