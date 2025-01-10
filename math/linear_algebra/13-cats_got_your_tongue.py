@@ -21,7 +21,8 @@ def np_cat(mat1, mat2, axis=0):
     Args:
         mat1 (numpy.ndarray): The first matrix.
         mat2 (numpy.ndarray): The second matrix.
-        axis (int): The axis along which the matrices will be concatenated. Default is 0.
+        axis (int): The axis along which the matrices
+        will be concatenated. Default is 0.
 
     Returns:
         numpy.ndarray: The concatenated matrix.
