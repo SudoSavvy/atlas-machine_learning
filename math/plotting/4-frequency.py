@@ -3,7 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def frequency():
+    # Set random seed for reproducibility
     np.random.seed(5)
+    
+    # Generate student grades
     student_grades = np.random.normal(68, 15, 50)
 
     # Plot the histogram
