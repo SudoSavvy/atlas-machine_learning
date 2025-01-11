@@ -6,24 +6,21 @@ def scatter():
     # Generate the data
     mean = [69, 0]
     cov = [[15, 8], [8, 15]]
-    np.random.seed(5)
+    np.random.seed(5)  # Set seed for reproducibility
     x, y = np.random.multivariate_normal(mean, cov, 2000).T
-    y += 180
+    y += 180  # Adjust weight data
 
-    # Create the scatter plot with the correct marker size and color
-    plt.scatter(x, y, c='magenta', s=10)  # Match point size and color
+    # Create the scatter plot
+    plt.scatter(x, y, c='magenta', s=10)  # magenta points, size 10
 
     # Set the title and labels
     plt.title("Men's Height vs Weight")
     plt.xlabel("Height (in)")
     plt.ylabel("Weight (lbs)")
 
-    # Set exact axis limits
+    # Set the axis limits
     plt.xlim(55, 80)
     plt.ylim(165, 195)
-
-    # Use a default figure size to avoid scaling issues
-    plt.gcf().set_size_inches(6.4, 4.8)
 
     # Display the plot
     plt.show()
