@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 
-def poly_derivative(poly):
+"""
+Module: 9-sum_total
+Description: This module contains a function to calculate the sum of squares of the first n integers.
+The sum is calculated using the formula:
+    sum = n * (n + 1) * (2 * n + 1) / 6
+"""
+
+def summation_i_squared(n):
     """
-    Function: poly_derivative
-    Description: Calculates the derivative of a polynomial represented by a list of coefficients.
+    Function: summation_i_squared
+    Description: Calculates the sum of squares of the first n integers.
+    Formula used: n * (n + 1) * (2 * n + 1) / 6
     
     Parameters:
-    poly (list): A list of coefficients where the index represents the power of x.
-                 Example: [5, 3, 0, 1] represents f(x) = x^3 + 3x + 5.
+    n (int): The number up to which the sum of squares is calculated.
     
     Returns:
-    list: A list of coefficients representing the derivative of the polynomial.
-          Returns [0] if the derivative is 0.
-    None: If the input is not a valid list of coefficients.
+    int: The sum of squares of the integers from 1 to n.
+    None: If the input n is not a positive integer.
     """
-    if not isinstance(poly, list) or not all(isinstance(c, (int, float)) for c in poly):
+    if not isinstance(n, int) or n <= 0:
         return None
-    if len(poly) == 0 or len(poly) == 1:  # Constant polynomial or empty list
-        return [0]
-    
-    # Compute the derivative
-    derivative = [i * poly[i] for i in range(1, len(poly))]
-    
-    return derivative if derivative else [0]
+    return (n * (n + 1) * (2 * n + 1)) // 6
