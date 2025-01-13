@@ -9,6 +9,7 @@ The index of the list represents the power of x for the
 corresponding coefficient.
 """
 
+
 def poly_derivative(poly):
     """
     Function: poly_derivative
