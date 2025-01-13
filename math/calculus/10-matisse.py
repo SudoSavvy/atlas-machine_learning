@@ -1,25 +1,32 @@
 #!/usr/bin/env python3
 
 """
-Module: 9-sum_total
-Description: This module contains a function to calculate the sum of squares of the first n integers.
-The sum is calculated using the formula:
-    sum = n * (n + 1) * (2 * n + 1) / 6
+Module: 10-matisse
+Description: This module contains a function to calculate the derivative of a polynomial represented as a list of coefficients.
+The index of the list represents the power of x for the corresponding coefficient.
 """
 
-def summation_i_squared(n):
+def poly_derivative(poly):
     """
-    Function: summation_i_squared
-    Description: Calculates the sum of squares of the first n integers.
-    Formula used: n * (n + 1) * (2 * n + 1) / 6
-    
+    Function: poly_derivative
+    Description: Calculates the derivative of a polynomial represented as a list of coefficients.
+
     Parameters:
-    n (int): The number up to which the sum of squares is calculated.
-    
+    poly (list): A list of coefficients where the index represents the power of x.
+
     Returns:
-    int: The sum of squares of the integers from 1 to n.
-    None: If the input n is not a positive integer.
+    list: A new list of coefficients representing the derivative of the polynomial.
+    None: If the input is not a valid list of coefficients.
+    
+    Notes:
+    - If the derivative is 0, the function returns [0].
+    - Invalid inputs include non-lists, empty lists, or lists containing non-numeric elements.
     """
-    if not isinstance(n, int) or n <= 0:
+    if not isinstance(poly, list) or not poly or not all(isinstance(c, (int, float)) for c in poly):
         return None
-    return (n * (n + 1) * (2 * n + 1)) // 6
+
+    # Derive the polynomial
+    derivative = [i * poly[i] for i in range(1, len(poly))]
+
+    # Return [0] if the derivative is zero (i.e., original polynomial is a constant)
+    return derivative if derivative else [0]
