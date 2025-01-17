@@ -61,7 +61,8 @@ class Poisson:
         if k < 0:
             return 0
         k_fact = self.factorial(k)
-        return (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
+        pmf_value = (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
+        return round(pmf_value, 10)
 
     def cdf(self, k):
         """
@@ -79,4 +80,4 @@ class Poisson:
         cdf_sum = 0.0
         for i in range(k + 1):
             cdf_sum += self.pmf(i)
-        return cdf_sum
+        return round(cdf_sum, 10)
