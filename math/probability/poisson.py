@@ -45,7 +45,7 @@ class Poisson:
         for i in range(1, 200):  # Increase the number of terms for higher precision
             term *= x / i
             result += term
-            if term < 1e-16:  # Break if the term is too small to affect precision
+            if abs(term) < 1e-16:  # Break if the term is too small to affect precision
                 break
         return result
 
