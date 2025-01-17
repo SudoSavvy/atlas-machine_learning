@@ -33,6 +33,9 @@ class Exponential:
         exp_value = 1
         term = 1
         n = 1
+        # Check if x is too large and adjust calculation
+        if self.lambtha * x > 700:  # Prevent overflow in large exponentials
+            return 0
         while True:
             term *= (-self.lambtha * x) / n
             exp_value += term
@@ -40,3 +43,4 @@ class Exponential:
             if abs(term) < 1e-15:  # Stop when the term becomes small enough
                 break
         return self.lambtha * exp_value
+
