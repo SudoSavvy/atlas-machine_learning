@@ -19,3 +19,24 @@ class Exponential:
                 raise ValueError("data must contain multiple values")
             # Estimate lambtha as the inverse of the mean of the data
             self.lambtha = 1 / (sum(data) / len(data))
+
+    def pdf(self, x):
+        """
+        Calculates the Probability Density Function (PDF) for a given time period x.
+
+        :param x: time period
+        :return: PDF value for x
+        """
+        if x < 0:
+            return 0
+        # Calculate e^(-lambda * x) manually
+        exp_value = 1
+        term = 1
+        n = 1
+        while True:
+            term *= (-self.lambtha * x) / n
+            exp_value += term
+            n += 1
+            if abs(term) < 1e-15:  # Stop when the term becomes small enough
+                break
+        return self.lambtha * exp_value
