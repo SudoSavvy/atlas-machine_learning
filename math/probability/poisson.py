@@ -67,4 +67,11 @@ class Poisson:
         for i in range(k + 1):
             cdf_sum += self.pmf(i)
 
-        return cdf_sum  # No rounding; returning as is
+        return cdf_sum
+
+
+# Function to print with the desired precision
+def print_precision(value):
+    # Print the value with exactly 16 digits precision
+    print(f"{value:.16f}")
+
