@@ -27,13 +27,14 @@ class Poisson:
     def exp(self, x):
         """
         Calculates the exponential of x using a Taylor series approximation
+        with very high precision
         """
         result = 1.0
         term = 1.0
         for i in range(1, 200):  # Increase terms for higher precision
             term *= x / i
             result += term
-            if abs(term) < 1e-16:  # Stop only if the term becomes negligibly small
+            if abs(term) < 1e-17:  # Stop when the term is small enough
                 break
         return result
 
