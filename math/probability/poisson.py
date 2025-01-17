@@ -33,7 +33,7 @@ class Poisson:
         for i in range(1, 200):  # Increase terms for higher precision
             term *= x / i
             result += term
-            if abs(term) < 1e-16:  # Stop if the term is negligible
+            if abs(term) < 1e-16:  # Stop only if the term becomes negligibly small
                 break
         return result
 
@@ -66,6 +66,4 @@ class Poisson:
         for i in range(k + 1):
             cdf_sum += self.pmf(i)
 
-        # Round the result to 10 decimal places to match the expected precision
-        return round(cdf_sum, 10)  # Ensuring precision
-
+        return cdf_sum  # No rounding; returning as is
