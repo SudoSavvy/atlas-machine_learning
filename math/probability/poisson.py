@@ -20,6 +20,34 @@ class Poisson:
                 raise ValueError("data must contain multiple values")
             self.lambtha = float(sum(data) / len(data))
 
+    def factorial(self, n):
+        """
+        Calculates the factorial of a number n
+
+        :param n: integer value
+        :return: factorial of n
+        """
+        if n == 0 or n == 1:
+            return 1
+        fact = 1
+        for i in range(2, n + 1):
+            fact *= i
+        return fact
+
+    def exp(self, x):
+        """
+        Calculates the exponential of x using a Taylor series approximation
+
+        :param x: exponent
+        :return: e^x
+        """
+        result = 1
+        term = 1
+        for i in range(1, 100):  # Approximate up to 100 terms
+            term *= x / i
+            result += term
+        return result
+
     def pmf(self, k):
         """
         Calculates the Probability Mass Function (PMF) for a given number of successes k
@@ -29,8 +57,8 @@ class Poisson:
         """
         if k < 0 or not isinstance(k, int):
             return 0
-        k_fact = math.factorial(k)
-        return (math.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
+        k_fact = self.factorial(k)
+        return (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
 
     def cdf(self, k):
         """
