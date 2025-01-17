@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import math
 
 class Poisson:
     def __init__(self, data=None, lambtha=1.):
