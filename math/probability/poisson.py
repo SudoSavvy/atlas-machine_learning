@@ -42,9 +42,11 @@ class Poisson:
         """
         result = 1.0
         term = 1.0
-        for i in range(1, 100):  # Approximate up to 100 terms
+        for i in range(1, 200):  # Increase the number of terms for higher precision
             term *= x / i
             result += term
+            if term < 1e-16:  # Break if the term is too small to affect precision
+                break
         return result
 
     def pmf(self, k):
@@ -61,8 +63,7 @@ class Poisson:
         if k < 0:
             return 0
         k_fact = self.factorial(k)
-        pmf_value = (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
-        return round(pmf_value, 10)
+        return (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
 
     def cdf(self, k):
         """
