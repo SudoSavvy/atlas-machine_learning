@@ -49,7 +49,8 @@ class Poisson:
 
     def pmf(self, k):
         """
-        Calculates the Probability Mass Function (PMF) for a given number of successes k
+        Calculates the Probability Mass Function (PMF) for a given number of
+        successes k
 
         :param k: number of successes
         :return: PMF value for k
@@ -61,7 +62,8 @@ class Poisson:
 
     def cdf(self, k):
         """
-        Calculates the Cumulative Distribution Function (CDF) for a given number of successes k
+        Calculates the Cumulative Distribution Function (CDF) for a given
+        number of successes k
 
         :param k: number of successes
         :return: CDF value for k
