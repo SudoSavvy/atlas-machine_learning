@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 class Poisson:
     def __init__(self, data=None, lambtha=1.):
         """
@@ -49,21 +47,23 @@ class Poisson:
 
     def pmf(self, k):
         """
-        Calculates the Probability Mass Function (PMF) for a given number of
-        successes k
+        Calculates the Probability Mass Function (PMF) for a given number of successes k
 
         :param k: number of successes
         :return: PMF value for k
         """
-        if k < 0 or not isinstance(k, int):
+        try:
+            k = int(k)
+        except (ValueError, TypeError):
+            return 0
+        if k < 0:
             return 0
         k_fact = self.factorial(k)
         return (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
 
     def cdf(self, k):
         """
-        Calculates the Cumulative Distribution Function (CDF) for a given
-        number of successes k
+        Calculates the Cumulative Distribution Function (CDF) for a given number of successes k
 
         :param k: number of successes
         :return: CDF value for k
