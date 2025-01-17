@@ -80,4 +80,4 @@ class Poisson:
         cdf_sum = 0.0
         for i in range(k + 1):
             cdf_sum += self.pmf(i)
-        return round(cdf_sum, 10)
+        return cdf_sum
