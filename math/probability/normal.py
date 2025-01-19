@@ -67,14 +67,12 @@ class Normal:
         Returns:
             float: The PDF value for x.
         """
-        # Calculate the PDF using the formula:
         pi = 3.141592653589793
         sqrt_2pi = (2 * pi) ** 0.5
 
         coeff = 1 / (self.stddev * sqrt_2pi)
         exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
 
-        # Calculate exp(exponent) manually for precision
         exp_value = 1
         term = 1
         n = 1
@@ -86,3 +84,31 @@ class Normal:
                 break
 
         return coeff * exp_value
+
+    def cdf(self, x):
+        """
+        Calculate the value of the CDF for a given x-value.
+
+        Args:
+            x (float): The x-value.
+
+        Returns:
+            float: The CDF value for x.
+        """
+        # CDF formula for normal distribution:
+        # CDF(x) = 0.5 * [1 + erf((x - mean) / (stddev * sqrt(2)))]
+        z = (x - self.mean) / (self.stddev * 2 ** 0.5)
+
+        # Calculate erf(z) manually
+        erf = 2 / (3.141592653589793 ** 0.5)
+        term = z
+        erf_value = term
+        n = 1
+        while True:
+            term *= -z ** 2 / n
+            erf_value += term / (2 * n + 1)
+            n += 1
+            if abs(term) < 1e-15:
+                break
+
+        return 0.5 * (1 + erf * erf_value)
