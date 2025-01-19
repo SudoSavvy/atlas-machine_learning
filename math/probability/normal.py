@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
+
 class Normal:
     """Represents a normal distribution."""
+
 
     def __init__(self, data=None, mean=0., stddev=1.):
         """
