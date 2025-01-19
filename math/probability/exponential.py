@@ -20,6 +20,7 @@ class Exponential:
             # Estimate lambtha as the inverse of the mean of the data
             self.lambtha = 1 / (sum(data) / len(data))
 
+
     def pdf(self, x):
         """
         Calculates the Probability Density Function (PDF) for a given time period x.
@@ -42,6 +43,7 @@ class Exponential:
             if abs(term) < 1e-15:  # Stop when the term becomes small enough
                 break
         return self.lambtha * exp_value
+
 
     def cdf(self, x):
         """
