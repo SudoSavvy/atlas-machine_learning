@@ -33,7 +33,6 @@ class Exponential:
         exp_value = 1
         term = 1
         n = 1
-        # Check if x is too large and adjust calculation
         if self.lambtha * x > 700:  # Prevent overflow in large exponentials
             return 0
         while True:
@@ -44,3 +43,25 @@ class Exponential:
                 break
         return self.lambtha * exp_value
 
+    def cdf(self, x):
+        """
+        Calculates the Cumulative Distribution Function (CDF) for a given time period x.
+
+        :param x: time period
+        :return: CDF value for x
+        """
+        if x < 0:
+            return 0
+        # Calculate CDF: 1 - e^(-lambtha * x)
+        exp_value = 1
+        term = 1
+        n = 1
+        if self.lambtha * x > 700:  # Prevent overflow for large exponentials
+            return 1
+        while True:
+            term *= (-self.lambtha * x) / n
+            exp_value += term
+            n += 1
+            if abs(term) < 1e-15:  # Stop when the term becomes small enough
+                break
+        return 1 - exp_value
