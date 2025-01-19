@@ -68,7 +68,6 @@ class Normal:
             float: The PDF value for x.
         """
         # Calculate the PDF using the formula:
-        # PDF(x) = (1 / (stddev * sqrt(2 * pi))) * exp(-((x - mean)^2) / (2 * stddev^2))
         pi = 3.141592653589793
         sqrt_2pi = (2 * pi) ** 0.5
 
