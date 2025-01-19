@@ -3,7 +3,6 @@
 class Normal:
     """Represents a normal distribution."""
 
-
     def __init__(self, data=None, mean=0., stddev=1.):
         """
         Initialize the Normal distribution.
@@ -33,4 +32,3 @@ class Normal:
             # Calculate standard deviation
             variance = sum((x - self.mean) ** 2 for x in data) / len(data)
             self.stddev = variance ** 0.5
-
