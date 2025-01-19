@@ -6,7 +6,8 @@ class Exponential:
         Initialize the Exponential distribution.
 
         :param data: list of data points (optional)
-        :param lambtha: expected number of occurrences in a given time frame
+        :param lambtha: expected number of occurrences in a given time
+        frame
         """
         if data is None:
             if lambtha <= 0:
@@ -23,7 +24,8 @@ class Exponential:
 
     def pdf(self, x):
         """
-        Calculates the Probability Density Function (PDF) for a given time period x.
+        Calculates the Probability Density Function (PDF) for a given time
+        period x.
 
         :param x: time period
         :return: PDF value for x
@@ -47,7 +49,8 @@ class Exponential:
 
     def cdf(self, x):
         """
-        Calculates the Cumulative Distribution Function (CDF) for a given time period x.
+        Calculates the Cumulative Distribution Function (CDF) for a given
+        time period x.
 
         :param x: time period
         :return: CDF value for x
