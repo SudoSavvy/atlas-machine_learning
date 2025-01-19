@@ -3,44 +3,40 @@
 class Binomial:
     """Represents a binomial distribution."""
 
-    def __init__(self, data=None, n=1, p=0.5):
+    # Existing methods (e.g., __init__) go here...
+
+    def pmf(self, k):
         """
-        Initialize the Binomial distribution.
+        Calculates the Probability Mass Function (PMF) for a given number of successes k.
 
         Args:
-            data (list): List of data points (optional).
-            n (int): Number of trials (must be positive).
-            p (float): Probability of success (0 < p < 1).
+            k (int): Number of successes.
 
-        Raises:
-            ValueError: If n is not a positive value.
-            ValueError: If p is not between 0 and 1.
-            TypeError: If data is not a list.
-            ValueError: If data contains fewer than two data points.
+        Returns:
+            float: PMF value for k.
         """
-        if data is None:
-            if n <= 0:
-                raise ValueError("n must be a positive value")
-            if not (0 < p < 1):
-                raise ValueError("p must be greater than 0 and less than 1")
-            self.n = int(n)
-            self.p = float(p)
-        else:
-            if not isinstance(data, list):
-                raise TypeError("data must be a list")
-            if len(data) < 2:
-                raise ValueError("data must contain multiple values")
+        # Ensure k is an integer
+        k = int(k)
 
-            # Calculate mean and variance from the data
-            mean = sum(data) / len(data)
-            variance = sum((x - mean) ** 2 for x in data) / len(data)
+        # Check if k is within range
+        if k < 0 or k > self.n:
+            return 0
 
-            # Calculate p and n
-            p = 1 - (variance / mean)
-            n = round(mean / p)
+        # Calculate factorial manually
+        def factorial(n):
+            result = 1
+            for i in range(1, n + 1):
+                result *= i
+            return result
 
-            # Recalculate p using the rounded n
-            p = mean / n
+        # Calculate binomial coefficient C(n, k) = n! / (k! * (n - k)!)
+        n_factorial = factorial(self.n)
+        k_factorial = factorial(k)
+        n_k_factorial = factorial(self.n - k)
+        binomial_coeff = n_factorial / (k_factorial * n_k_factorial)
 
-            self.n = int(n)
-            self.p = float(p)
+        # Calculate PMF
+        p_k = (self.p ** k) * ((1 - self.p) ** (self.n - k))
+        pmf_value = binomial_coeff * p_k
+
+        return pmf_value
