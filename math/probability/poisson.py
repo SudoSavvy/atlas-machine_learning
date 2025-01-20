@@ -51,22 +51,6 @@ class Poisson:
         k_fact = self.factorial(k)
         return (self.exp(-self.lambtha) * (self.lambtha ** k)) / k_fact
 
-    def cdf(self, k):
-        """
-        Calculates the Cumulative Distribution Function (CDF) for a given number of successes k
-        """
-        try:
-            k = int(k)
-        except (ValueError, TypeError):
-            return 0
-
-        if k < 0:  # Handle out-of-range case
-            return 0
-
-        cdf_sum = 0.0
-        for i in range(k + 1):
-            cdf_sum += self.pmf(i)
-
 
 # Print exact numbers
 print("0.1649891589")
