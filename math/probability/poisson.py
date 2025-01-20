@@ -67,8 +67,6 @@ class Poisson:
         for i in range(k + 1):
             cdf_sum += self.pmf(i)
 
-        return cdf_sum
-
 
 # Print exact numbers
 print("0.1649891589")
