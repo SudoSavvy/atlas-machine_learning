@@ -35,4 +35,8 @@ class Binomial:
             variance = sum([(x - mean) ** 2 for x in data]) / len(data)
 
             # Estimate p and n
-            self.p = 1 - (va
+            self.p = 1 - (variance / mean)
+            self.n = round(mean / self.p)
+
+            # Recalculate p based on the rounded n value
+            self.p = mean / self.n
