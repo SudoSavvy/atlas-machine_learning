@@ -3,40 +3,36 @@
 class Binomial:
     """Represents a binomial distribution."""
 
-    # Existing methods (e.g., __init__) go here...
-
-    def pmf(self, k):
+    def __init__(self, data=None, n=1, p=0.5):
         """
-        Calculates the Probability Mass Function (PMF) for a given number of successes k.
+        Initializes the Binomial distribution.
 
         Args:
-            k (int): Number of successes.
+            data (list, optional): Data points to estimate the distribution.
+            n (int): Number of trials (default: 1).
+            p (float): Probability of success (default: 0.5).
 
-        Returns:
-            float: PMF value for k.
+        Raises:
+            TypeError: If data is not a list.
+            ValueError: If data has less than two points.
+            ValueError: If n is not a positive integer or p is invalid.
         """
-        # Ensure k is an integer
-        k = int(k)
+        if data is None:
+            if n <= 0:
+                raise ValueError("n must be a positive value")
+            if not (0 < p < 1):
+                raise ValueError("p must be greater than 0 and less than 1")
+            self.n = int(n)
+            self.p = float(p)
+        else:
+            if not isinstance(data, list):
+                raise TypeError("data must be a list")
+            if len(data) < 2:
+                raise ValueError("data must contain multiple values")
 
-        # Check if k is within range
-        if k < 0 or k > self.n:
-            return 0
+            # Calculate mean and variance from data
+            mean = sum(data) / len(data)
+            variance = sum([(x - mean) ** 2 for x in data]) / len(data)
 
-        # Calculate factorial manually
-        def factorial(n):
-            result = 1
-            for i in range(1, n + 1):
-                result *= i
-            return result
-
-        # Calculate binomial coefficient C(n, k) = n! / (k! * (n - k)!)
-        n_factorial = factorial(self.n)
-        k_factorial = factorial(k)
-        n_k_factorial = factorial(self.n - k)
-        binomial_coeff = n_factorial / (k_factorial * n_k_factorial)
-
-        # Calculate PMF
-        p_k = (self.p ** k) * ((1 - self.p) ** (self.n - k))
-        pmf_value = binomial_coeff * p_k
-
-        return pmf_value
+            # Estimate p and n
+            self.p = 1 - (va
