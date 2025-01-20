@@ -34,105 +34,35 @@ class Normal:
             self.stddev = variance ** 0.5
 
     def z_score(self, x):
-        """
-        Calculate the z-score of a given x-value.
-
-        Args:
-            x (float): The x-value.
-
-        Returns:
-            float: The z-score of x.
-        """
+        """Calculate the z-score of a given x-value."""
         return (x - self.mean) / self.stddev
 
     def x_value(self, z):
-        """
-        Calculate the x-value of a given z-score.
-
-        Args:
-            z (float): The z-score.
-
-        Returns:
-            float: The x-value corresponding to z.
-        """
+        """Calculate the x-value of a given z-score."""
         return z * self.stddev + self.mean
 
-    def pdf(self, x):
-        """
-        Calculate the value of the PDF for a given x-value.
-
-        Args:
-            x (float): The x-value.
-
-        Returns:
-            float: The PDF value for x.
-        """
-        pi = 3.141592653589793
-        sqrt_2pi = (2 * pi) ** 0.5
-
-        coeff = 1 / (self.stddev * sqrt_2pi)
-        exponent = -((x - self.mean) ** 2) / (2 * self.stddev ** 2)
-
-        exp_value = 1
-        term = 1
-        n = 1
-        while True:
-            term *= exponent / n
-            exp_value += term
-            n += 1
-            if abs(term) < 1e-15:
-                break
-
-        return coeff * exp_value
-
     def exp(self, x):
-        """
-        Calculate the exponential function for a given x-value.
-
-        Args:
-            x (float): The x-value.
-
-        Returns:
-            float: The exponential function value for x.
-        """
-        exp_value = 1
+        """Calculate the exponential function for a given x-value."""
+        result = 1
         term = 1
         n = 1
-        while True:
+        while abs(term) > 1e-15:
             term *= x / n
-            exp_value += term
+            result += term
             n += 1
-            if abs(term) < 1e-15:
-                break
-
-        return exp_value
+        return result
 
     def erf(self, x):
-        """
-        Calculate the error function for a given x-value.
-
-        Args:
-            x (float): The x-value.
-
-        Returns:
-            float: The error function value for x.
-        """
-        # Use the approximation constants for better precision
+        """Calculate the error function for a given x-value."""
+        # Coefficients for the approximation
         a = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429]
-        t = 1 / (1 + 0.3275911 * abs(x))
-        poly = t * (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0])
-        erf_value = 1 - poly * self.exp(-x * x)
-        return erf_value if x >= 0 else -erf_value
+        sign = 1 if x >= 0 else -1
+        x = abs(x)
+        t = 1 / (1 + 0.3275911 * x)
+        poly = (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0])
+        return sign * (1 - poly * self.exp(-x * x))
 
     def cdf(self, x):
-        """
-        Calculate the value of the CDF for a given x-value.
-
-        Args:
-            x (float): The x-value.
-
-        Returns:
-            float: The CDF value for x.
-        """
+        """Calculate the value of the CDF for a given x-value."""
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
         return 0.5 * (1 + self.erf(z))
