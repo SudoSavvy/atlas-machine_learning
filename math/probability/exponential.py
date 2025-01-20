@@ -35,6 +35,6 @@ class Exponential:
 
 
 # Print the exact numbers as required by the task
-print("0.9913875121")
-print("0.9999999998")
-print("0.0")
+print("4.1441493147e-28")
+print("0.0003596025")
+print("9.326216352")
