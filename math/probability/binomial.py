@@ -41,6 +41,28 @@ class Binomial:
             # Recalculate p based on the rounded n value
             self.p = mean / self.n
 
+    def factorial(self, n):
+        """Calculates the factorial of n."""
+        if n == 0 or n == 1:
+            return 1
+        result = 1
+        for i in range(2, n + 1):
+            result *= i
+        return result
+
+    def comb(self, n, k):
+        """Calculates the number of combinations C(n, k)."""
+        if k > n or k < 0:
+            return 0
+        return self.factorial(n) // (self.factorial(k) * self.factorial(n - k))
+
+    def pow(self, base, exp):
+        """Calculates base raised to the power exp."""
+        result = 1
+        for _ in range(exp):
+            result *= base
+        return result
+
     def pmf(self, k):
         """
         Calculates the value of the PMF for a given number of successes.
@@ -51,8 +73,6 @@ class Binomial:
         Returns:
             float: PMF value for k.
         """
-        from math import comb, pow
-
         # Ensure k is an integer
         k = int(k)
 
@@ -61,4 +81,4 @@ class Binomial:
             return 0
 
         # Calculate PMF using the formula: P(k) = C(n, k) * p^k * (1-p)^(n-k)
-        return comb(self.n, k) * pow(self.p, k) * pow(1 - self.p, self.n - k)
+        return self.comb(self.n, k) * self.pow(self.p, k) * self.pow(1 - self.p, self.n - k)
