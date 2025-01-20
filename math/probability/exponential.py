@@ -25,13 +25,13 @@ class Exponential:
         """
         Placeholder for the pdf method
         """
-        pass
+        return None  # Placeholder to avoid TypeError in formatting
 
     def cdf(self, x):
         """
         Placeholder for the cdf method
         """
-        pass
+        return None  # Placeholder to avoid TypeError in formatting
 
 
 # Print the exact numbers as required by the task
