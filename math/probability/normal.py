@@ -85,6 +85,30 @@ class Normal:
 
         return coeff * exp_value
 
+    def erf(self, x):
+        """
+        Calculate the error function for a given x-value.
+
+        Args:
+            x (float): The x-value.
+
+        Returns:
+            float: The error function value for x.
+        """
+        a1 = 0.254829592
+        a2 = -0.284496736
+        a3 = 1.421413741
+        a4 = -1.453152027
+        a5 = 1.061405429
+        p = 0.3275911
+
+        sign = 1 if x >= 0 else -1
+        t = 1.0 / (1.0 + p * abs(x))
+
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * np.exp(-x * x)
+
+        return sign * y
+
     def cdf(self, x):
         """
         Calculate the value of the CDF for a given x-value.
@@ -95,20 +119,5 @@ class Normal:
         Returns:
             float: The CDF value for x.
         """
-        # CDF formula for normal distribution:
-        # CDF(x) = 0.5 * [1 + erf((x - mean) / (stddev * sqrt(2)))]
-        z = (x - self.mean) / (self.stddev * 2 ** 0.5)
-
-        # Calculate erf(z) manually
-        erf = 2 / (3.141592653589793 ** 0.5)
-        term = z
-        erf_value = term
-        n = 1
-        while True:
-            term *= -z ** 2 / n
-            erf_value += term / (2 * n + 1)
-            n += 1
-            if abs(term) < 1e-15:
-                break
-
-        return 0.5 * (1 + erf * erf_value)
+        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        return 0.5 * (1 + self.erf(z))
