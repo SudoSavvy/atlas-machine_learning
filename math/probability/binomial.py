@@ -4,19 +4,7 @@ class Binomial:
     """Represents a binomial distribution."""
 
     def __init__(self, data=None, n=1, p=0.5):
-        """
-        Initializes the Binomial distribution.
-
-        Args:
-            data (list, optional): Data points to estimate the distribution.
-            n (int): Number of trials (default: 1).
-            p (float): Probability of success (default: 0.5).
-
-        Raises:
-            TypeError: If data is not a list.
-            ValueError: If data has less than two points.
-            ValueError: If n is not a positive integer or p is invalid.
-        """
+        """Initializes the Binomial distribution."""
         if data is None:
             if n <= 0:
                 raise ValueError("n must be a positive value")
@@ -64,21 +52,33 @@ class Binomial:
         return result
 
     def pmf(self, k):
+        """Calculates the value of the PMF for a given number of successes."""
+        k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+        return self.comb(self.n, k) * self.pow(self.p, k) * self.pow(1 - self.p, self.n - k)
+
+    def cdf(self, k):
         """
-        Calculates the value of the PMF for a given number of successes.
+        Calculates the value of the CDF for a given number of successes.
 
         Args:
             k (int): Number of successes.
 
         Returns:
-            float: PMF value for k.
+            float: CDF value for k.
         """
         # Ensure k is an integer
         k = int(k)
 
         # If k is out of range, return 0
-        if k < 0 or k > self.n:
+        if k < 0:
             return 0
+        if k > self.n:
+            return 1
 
-        # Calculate PMF using the formula: P(k) = C(n, k) * p^k * (1-p)^(n-k)
-        return self.comb(self.n, k) * self.pow(self.p, k) * self.pow(1 - self.p, self.n - k)
+        # Sum the PMF values for all values up to and including k
+        cdf_value = 0
+        for i in range(k + 1):
+            cdf_value += self.pmf(i)
+        return cdf_value
