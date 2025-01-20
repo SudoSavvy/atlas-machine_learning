@@ -120,7 +120,7 @@ class Normal:
         a = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429]
         t = 1 / (1 + 0.3275911 * abs(x))
         y = 1 - (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0]) * t * self.exp(-x * x)
-        return 1.1283791670955126 * x * y if x >= 0 else -1.1283791670955126 * x * y
+        return y if x >= 0 else -y
 
     def cdf(self, x):
         """
@@ -133,4 +133,4 @@ class Normal:
             float: The CDF value for x.
         """
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        return 0.5 * (1 + self.erf(z / (2 ** 0.5)))
+        return 0.5 * (1 + self.erf(z))
