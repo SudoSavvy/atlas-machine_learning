@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 class Binomial:
     """Represents a binomial distribution."""
 
@@ -40,3 +38,25 @@ class Binomial:
 
             # Recalculate p based on the rounded n value
             self.p = mean / self.n
+
+    def pmf(self, k):
+        """
+        Calculates the value of the PMF for a given number of successes.
+
+        Args:
+            k (int): Number of successes.
+
+        Returns:
+            float: PMF value for k.
+        """
+        from math import comb, pow
+
+        # Ensure k is an integer
+        k = int(k)
+
+        # If k is out of range, return 0
+        if k < 0 or k > self.n:
+            return 0
+
+        # Calculate PMF using the formula: P(k) = C(n, k) * p^k * (1-p)^(n-k)
+        return comb(self.n, k) * pow(self.p, k) * pow(1 - self.p, self.n - k)
