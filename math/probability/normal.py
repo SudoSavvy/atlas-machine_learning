@@ -117,10 +117,12 @@ class Normal:
         Returns:
             float: The error function value for x.
         """
+        # Use the approximation constants for better precision
         a = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429]
         t = 1 / (1 + 0.3275911 * abs(x))
-        y = 1 - (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0]) * t * self.exp(-x * x)
-        return y if x >= 0 else -y
+        poly = t * (((((a[4] * t + a[3]) * t) + a[2]) * t + a[1]) * t + a[0])
+        erf_value = 1 - poly * self.exp(-x * x)
+        return erf_value if x >= 0 else -erf_value
 
     def cdf(self, x):
         """
