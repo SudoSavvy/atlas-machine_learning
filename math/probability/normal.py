@@ -85,6 +85,28 @@ class Normal:
 
         return coeff * exp_value
 
+    def exp(self, x):
+        """
+        Calculate the exponential function for a given x-value.
+
+        Args:
+            x (float): The x-value.
+
+        Returns:
+            float: The exponential function value for x.
+        """
+        exp_value = 1
+        term = 1
+        n = 1
+        while True:
+            term *= x / n
+            exp_value += term
+            n += 1
+            if abs(term) < 1e-15:
+                break
+
+        return exp_value
+
     def erf(self, x):
         """
         Calculate the error function for a given x-value.
@@ -105,7 +127,7 @@ class Normal:
         sign = 1 if x >= 0 else -1
         t = 1.0 / (1.0 + p * abs(x))
 
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * np.exp(-x * x)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-x * x)
 
         return sign * y
 
