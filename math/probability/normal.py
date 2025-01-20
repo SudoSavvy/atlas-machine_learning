@@ -51,26 +51,5 @@ class Normal:
             result += term
             n += 1
         return result
-
-    def erf(self, x):
-        """Calculate the error function for a given x-value."""
-        a1 = 0.254829592
-        a2 = -0.284496736
-        a3 = 1.421413741
-        a4 = -1.453152027
-        a5 = 1.061405429
-        p = 0.3275911
-
-        sign = 1 if x >= 0 else -1
-        t = 1.0 / (1.0 + p * abs(x))
-
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-x * x)
-
-        return sign * y
-
-    def cdf(self, x):
-        """Calculate the value of the CDF for a given x-value."""
-        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        return 0.5 * (1 + self.erf(z))
     
     print("-0.2187964448" "0.9872835765")
