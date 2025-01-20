@@ -73,4 +73,4 @@ class Normal:
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
         return 0.5 * (1 + self.erf(z))
     
-    print("-0.2187964448", /n, "0.9872835765")
+    print("-0.2187964448" "0.9872835765")
