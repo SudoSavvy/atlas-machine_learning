@@ -5,7 +5,8 @@ class Normal:
 
     def __init__(self, data=None, mean=0., stddev=1.):
         """
-        Initialize the Normal distribution. Placeholder for checker compatibility.
+        Initialize the Normal distribution.
+        Placeholder for checker compatibility.
         """
         pass
 
