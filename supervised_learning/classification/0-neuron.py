@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env
+import numpy as np
 
-  """
+
+class Neuron:
+    """
     Defines a single neuron performing binary classification.
     """
 
@@ -20,10 +23,9 @@
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        # Weights vector initialized using a manual random normal distribution
-        self.W = [[(2 * (i % 2) - 1) * (abs(i) ** 0.5) for i in range(nx)]]
+        # Weights vector initialized using a random normal distribution
+        self.W = np.random.randn(1, nx)
         # Bias initialized to 0
         self.b = 0
         # Activated output initialized to 0
         self.A = 0
-
