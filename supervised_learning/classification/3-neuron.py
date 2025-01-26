@@ -67,7 +67,8 @@ class Neuron:
 
         Args:
             Y (numpy.ndarray): Correct labels for the input data, shape (1, m).
-            A (numpy.ndarray): Activated output of the neuron for each example, shape (1, m).
+            A (numpy.ndarray): Activated output of the neuron for each
+            example, shape (1, m).
 
         Returns:
             float: The cost of the model.
