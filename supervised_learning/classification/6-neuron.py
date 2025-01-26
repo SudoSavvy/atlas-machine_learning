@@ -42,8 +42,14 @@ class Neuron:
     def cost(self, Y, A):
         # Compute the cost using binary cross-entropy
         m = Y.shape[1]
+
+        # Clip A to avoid log(0) or log(1)
+        epsilon = 1e-15  # A small value to avoid log(0)
+        A = np.clip(A, epsilon, 1 - epsilon)  # Ensure A is within the valid range for log
+
         cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
         return cost
+
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         # Check if iterations is a positive integer
