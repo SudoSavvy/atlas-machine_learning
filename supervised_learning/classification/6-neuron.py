@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 class Neuron:
     def __init__(self, nx):
         # Initialize the neuron with random weights and zero bias
-        self.__W = np.random.randn(1, nx)
-        self.__b = 0
-        self.__A = 0  # Activated output of the neuron
+        self.__W = np.random.randn(1, nx)  # Weights of the neuron (1, nx)
+        self.__b = 0  # Bias initialized to zero
+        self.__A = 0  # Activation output initialized to zero
 
     @property
     def W(self):
@@ -42,9 +43,6 @@ class Neuron:
     def cost(self, Y, A):
         # Compute the cost using binary cross-entropy
         m = Y.shape[1]
-        # Clip A to avoid log(0) or log(1)
-        epsilon = 1e-15  # A small value to avoid log(0)
-        A = np.clip(A, epsilon, 1 - epsilon)  # Ensure A is within the valid range for log
         cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
         return cost
 
@@ -71,10 +69,6 @@ class Neuron:
 
             # Perform one step of gradient descent
             self.gradient_descent(X, Y, A, alpha)
-
-            # Print cost every 100 iterations (optional, for monitoring)
-            if i % 100 == 0:
-                print(f"Cost after {i} iterations: {cost}")
 
         # Return the final activation output and the cost after training
         return A, cost
