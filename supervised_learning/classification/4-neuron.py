@@ -85,13 +85,15 @@ class Neuron:
             X (numpy.ndarray): Input data of shape (nx, m), where
                 nx is the number of input features to the neuron
                 m is the number of examples
-            Y (numpy.ndarray): Correct labels for the input data, shape (1, m).
+            Y (numpy.ndarray): Correct labels for the input data
+            shape (1, m).
 
         Returns:
             tuple: The neuron’s prediction and the cost of the network.
                 - prediction (numpy.ndarray): Predicted labels for
                 each example, shape (1, m),
-                  where label values are 1 if the output is >= 0.5, otherwise 0.
+                  where label values are 1 if the output is >= 0.5, otherwise
+                  0.
                 - cost (float): The cost of the model.
         """
         A = self.forward_prop(X)
