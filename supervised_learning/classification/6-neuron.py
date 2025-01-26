@@ -61,7 +61,7 @@ class Neuron:
         if alpha <= 0:
             raise ValueError("alpha must be positive")
 
-        # Train the model over the specified number of iterations
+        # Train the model over the specified number of iterations (Single loop for both forward_prop and gradient descent)
         for i in range(iterations):
             # Perform forward propagation
             A = self.forward_prop(X)
@@ -71,6 +71,10 @@ class Neuron:
 
             # Perform one step of gradient descent
             self.gradient_descent(X, Y, A, alpha)
+
+            # Print cost every 100 iterations (optional, for monitoring)
+            if i % 100 == 0:
+                print(f"Cost after {i} iterations: {cost}")
 
         # Return the final activation output and the cost after training
         return A, cost
