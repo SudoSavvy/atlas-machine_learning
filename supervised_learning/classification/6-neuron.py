@@ -56,11 +56,12 @@ class Neuron:
             self.__W -= alpha * dW
             self.__b -= alpha * db
         self.forward_prop(X)
-        A = np.round(self.__A)
+        A = np.round(self.__A).astype(int)
         cost = self.cost(Y, self.__A)
         return A, cost
 
-    def evaluate(self, X, Y):
-        self.forward_prop(X)
-        cost = self.cost(Y, self.__A)
-        return np.round(self.__A), cost
+    # In your main function
+    A, cost = nn.train(X, Y)
+    print(A)
+    print(cost)
+    print(nn.__W)
