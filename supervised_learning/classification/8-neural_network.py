@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 class NeuralNetwork:
     """Defines a neural network with one hidden layer performing binary classification."""
 
@@ -18,7 +17,7 @@ class NeuralNetwork:
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
         
-        # Initialize weights and biases for the hidden and output layer without loops
+        # Initialize weights and biases for the hidden and output layer
         self.W1 = np.random.randn(nodes, nx)  # Random initialization for hidden layer
         self.b1 = np.zeros((nodes, 1))        # Bias for hidden layer (zeros)
         self.A1 = np.zeros((nodes, 1))        # Activated output for hidden layer (zeros)
