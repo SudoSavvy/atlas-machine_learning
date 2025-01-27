@@ -30,7 +30,6 @@ class Neuron:
 
     def forward_prop(self, X):
         """Perform forward propagation."""
-        Z = sum(self.__W[0][i] * X[i] for i in range(len(X))) + self.__b
         self.__A = 1 / (1 + 2.71828**-Z)  # Sigmoid activation
         return self.__A
 
