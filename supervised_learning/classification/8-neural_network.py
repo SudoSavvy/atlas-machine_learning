@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import numpy as np
 
 class NeuralNetwork:
@@ -17,13 +16,13 @@ class NeuralNetwork:
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
         
-        # Initialize weights and biases the hidden and output layer
-        self.W1 = np.random.randn(nodes, nx)  # Random initialization  the hidden layer
+        # Initialize weights and biases  hidden and output layers using numpy
+        self.W1 = np.random.randn(nodes, nx)  # Random initialization of the hidden layer weights
         self.b1 = np.zeros((nodes, 1))        # Bias  the hidden layer (zeros)
         self.A1 = np.zeros((nodes, 1))        # Activated output  the hidden layer (zeros)
-        self.W2 = np.random.randn(1, nodes)   # Random initialization  the output layer
+        self.W2 = np.random.randn(1, nodes)   # Random initialization of the output layer weights
         self.b2 = np.zeros((1, 1))            # Bias  the output layer (zero)
-        self.A2 = np.zeros((1, 1))            # Activated output  the output layer (zeros)
+        self.A2 = np.zeros((1, 1))            # Activated output  the output layer (zero)
 
     def sigmoid(self, z):
         """Sigmoid activation function."""
