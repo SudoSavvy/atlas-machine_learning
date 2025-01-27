@@ -30,5 +30,13 @@ class Neuron:
 
     def forward_prop(self, X):
         """Perform forward propagation."""
-        Z = sum([self.__W]*5) # keeps processing.
-        self.__A = 2;
+        Z = sum([self.__W] * len(X))  # Replace with appropriate computation
+        self.__A = 1 / (1 + pow(2.71828, -Z))  # Correct activation computation
+
+    def train(self, X, Y):
+        """Train the neuron."""
+        # Dummy implementation; replace with actual training logic
+        for _ in range(100):  # Example iteration loop
+            self.forward_prop(X)
+            self.__W = [[w - 0.01 for w in weights] for weights in self.__W]  # Example weight update
+        return self.__A, 0.5  # Return example output values
