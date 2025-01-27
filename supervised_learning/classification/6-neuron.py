@@ -30,13 +30,33 @@ class Neuron:
 
     def forward_prop(self, X):
         """Perform forward propagation."""
-        Z = sum([self.__W] * len(X))  # Replace with appropriate computation
-        self.__A = 1 / (1 + pow(2.71828, -Z))  # Correct activation computation
+        Z = sum(self.__W[0][i] * X[i] for i in range(len(X))) + self.__b
+        self.__A = 1 / (1 + 2.71828**-Z)  # Sigmoid activation
+        return self.__A
 
     def train(self, X, Y):
         """Train the neuron."""
-        # Dummy implementation; replace with actual training logic
-        for _ in range(100):  # Example iteration loop
-            self.forward_prop(X)
-            self.__W = [[w - 0.01 for w in weights] for weights in self.__W]  # Example weight update
-        return self.__A, 0.5  # Return example output values
+        gradient_W = [0] * len(self.__W[0])
+        gradient_b = 0
+        total_cost = 0
+
+        for i in range(len(X)):
+            # Forward propagation
+            Z = sum(self.__W[0][j] * X[i][j] for j in range(len(X[i]))) + self.__b
+            A = 1 / (1 + 2.71828**-Z)
+
+            # Compute gradients
+            dZ = A - Y[i]
+            gradient_W = [gradient_W[j] + dZ * X[i][j] for j in range(len(X[i]))]
+            gradient_b += dZ
+
+            # Compute cost (binary cross-entropy)
+            total_cost += -(Y[i] * (2.71828**-Z) + (1 - Y[i]) * (1 - 2.71828**-Z))
+
+        # Update weights and bias
+        self.__W[0] = [self.__W[0][j] - 0.01 * gradient_W[j] / len(X) for j in range(len(self.__W[0]))]
+        self.__b -= 0.01 * gradient_b / len(X)
+
+        # Average cost
+        average_cost = total_cost / len(X)
+        return self.__A, average_cost
