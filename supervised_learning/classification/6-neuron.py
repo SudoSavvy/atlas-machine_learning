@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
+import numpy as np
 
 class Neuron:
-    """Defines a single neuron performing binary classification."""
-
     def __init__(self, nx):
-        """Initialize the neuron."""
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-
-        self.__W = [0.5] * nx
+        self.__W = np.random.randn(nx, 1)
         self.__b = 0
         self.__A = 0
 
@@ -27,29 +24,35 @@ class Neuron:
         return self.__A
 
     def forward_prop(self, X):
-        """Perform forward propagation."""
-        # Manually compute weighted sum (Dot product) for the first feature and bias
-        Z = sum(w * X[i] for i, w in enumerate(self.__W)) + self.__b
-        self.__A = 1 / (1 + 2.71828**-Z)  # Sigmoid activation
+        Z = np.dot(self.__W.T, X) + self.__b
+        self.__A = 1 / (1 + np.exp(-Z))
         return self.__A
 
-    def train(self, X, Y):
-        """Train the neuron."""
-        gradient_W = [0] * len(self.__W)
-        gradient_b = 0
-        total_cost = 0
+    def cost(self, Y, A):
+        m = Y.shape[1]
+        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
+        return cost
 
-        # SINGLE LOOP
-        for i, (x_row, y_val) in enumerate(zip(X, Y)):
-            Z = sum(w * x for w, x in zip(self.__W, x_row)) + self.__b
-            A = 1 / (1 + 2.71828**-Z)
-            dZ = A - y_val
-            gradient_W = [gw + dZ * x for gw, x in zip(gradient_W, x_row)]
-            gradient_b += dZ
-            total_cost += -(y_val * (2.71828**-Z) + (1 - y_val) * (1 - 2.71828**-Z))
+    def evaluate(self, X, Y):
+        self.forward_prop(X)
+        cost = self.cost(Y, self.__A)
+        return np.round(self.__A), cost
 
-        self.__W = [w - 0.01 * gw / len(X) for w, gw in zip(self.__W, gradient_W)]
-        self.__b -= 0.01 * gradient_b / len(X)
+    def train(self, X, Y, iterations=5000, alpha=0.05):
+        if not isinstance(iterations, int):
+            raise TypeError("iterations must be an integer")
+        if iterations <= 0:
+            raise ValueError("iterations must be a positive integer")
+        if not isinstance(alpha, float):
+            raise TypeError("alpha must be a float")
+        if alpha <= 0:
+            raise ValueError("alpha must be positive")
 
-        average_cost = total_cost / len(X)
-        return self.__A, average_cost
+        for _ in range(iterations):
+            self.forward_prop(X)
+            dZ = self.__A - Y
+            dW = np.dot(X, dZ.T) / X.shape[1]
+            db = np.sum(dZ) / X.shape[1]
+            self.__W -= alpha * dW.T
+            self.__b -= alpha * db
+        return self.__A, self.cost(Y, self.__A)
