@@ -57,4 +57,3 @@ class Neuron:
             self.__b -= alpha * db
         self.forward_prop(X)
         return np.round(self.__A), self.cost(Y, self.__A)
-        
