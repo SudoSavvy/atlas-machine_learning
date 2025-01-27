@@ -55,4 +55,6 @@ class Neuron:
             db = np.sum(dZ) / X.shape[1]
             self.__W -= alpha * dW
             self.__b -= alpha * db
-        return self.__A, self.cost(Y, self.__A)
+        self.forward_prop(X)
+        return np.round(self.__A), self.cost(Y, self.__A)
+        
