@@ -1,53 +1,31 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 class NeuralNetwork:
     """Defines a neural network with one hidden layer performing binary classification."""
 
     def __init__(self, nx, nodes):
-        """Initializes the neural network."""
+        """
+        Initializes the neural network.
+
+        Args:
+            nx (int): Number of input features.
+            nodes (int): Number of nodes in the hidden layer.
+        """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        
         if not isinstance(nodes, int):
             raise TypeError("nodes must be an integer")
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
-        
-        # Initialize weights and biases  hidden and output layers using numpy
-        self.W1 = np.random.randn(nodes, nx)  # Random initialization of the hidden layer weights
-        self.b1 = np.zeros((nodes, 1))        # Bias  the hidden layer (zeros)
-        self.A1 = np.zeros((nodes, 1))        # Activated output  the hidden layer (zeros)
-        self.W2 = np.random.randn(1, nodes)   # Random initialization of the output layer weights
-        self.b2 = np.zeros((1, 1))            # Bias  the output layer (zero)
-        self.A2 = np.zeros((1, 1))            # Activated output  the output layer (zero)
 
-    def sigmoid(self, z):
-        """Sigmoid activation function."""
-        return 1 / (1 + np.exp(-z))
-
-    def forward_prop(self, X):
-        """Performs forward propagation."""
-        Z1 = np.dot(self.W1, X) + self.b1
-        self.A1 = self.sigmoid(Z1)
-        
-        Z2 = np.dot(self.W2, self.A1) + self.b2
-        self.A2 = self.sigmoid(Z2)
-        
-        return self.A1, self.A2
-
-# Example usage
-nx = 5  # Number of input features
-nodes = 3  # Number of nodes in the hidden layer
-X = np.random.randn(nx, 10)  # 10 examples with nx features each
-
-# Initialize the neural network
-nn = NeuralNetwork(nx, nodes)
-
-# Perform forward propagation
-A1, A2 = nn.forward_prop(X)
-
-# Print the activated output of the second layer (binary classification output)
-print("Output of the network: \n", A2)
+        # Initialize weights and biases  the hidden and output layers
+        self.W1 = np.random.randn(nodes, nx)  # Hidden layer weights
+        self.b1 = np.zeros((nodes, 1))        # Hidden layer biases
+        self.A1 = np.zeros((nodes, 1))        # Hidden layer activated output
+        self.W2 = np.random.randn(1, nodes)  # Output layer weights
+        self.b2 = np.zeros((1, 1))           # Output layer bias
+        self.A2 = np.zeros((1, 1))           # Output layer activated output
