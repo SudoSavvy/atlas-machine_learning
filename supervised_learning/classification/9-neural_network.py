@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Defines a neural network with one hidden layer for binary classification.
+Defines a neural network with one hidden layer  binary classification.
 """
 
 import numpy as np
@@ -36,41 +36,41 @@ class NeuralNetwork:
             raise ValueError("nodes must be a positive integer")
 
         # Hidden layer
-        self.__W1 = np.random.randn(nodes, nx)  # Weight matrix for hidden layer
-        self.__b1 = np.zeros((nodes, 1))  # Bias vector for hidden layer
-        self.__A1 = 0  # Activated output for hidden layer
+        self.__W1 = np.random.randn(nodes, nx)  # Weight matrix  hidden layer
+        self.__b1 = np.zeros((nodes, 1))  # Bias vector  hidden layer
+        self.__A1 = 0  # Activated output  hidden layer
 
         # Output neuron
-        self.__W2 = np.random.randn(1, nodes)  # Weight vector for output neuron
-        self.__b2 = 0  # Bias for output neuron
-        self.__A2 = 0  # Activated output for output neuron (prediction)
+        self.__W2 = np.random.randn(1, nodes)  # Weight vector  output neuron
+        self.__b2 = 0  # Bias  output neuron
+        self.__A2 = 0  # Activated output  output neuron (prediction)
 
     @property
     def W1(self):
-        """Getter for W1."""
+        """Getter  W1."""
         return self.__W1
 
     @property
     def b1(self):
-        """Getter for b1."""
+        """Getter  b1."""
         return self.__b1
 
     @property
     def A1(self):
-        """Getter for A1."""
+        """Getter  A1."""
         return self.__A1
 
     @property
     def W2(self):
-        """Getter for W2."""
+        """Getter  W2."""
         return self.__W2
 
     @property
     def b2(self):
-        """Getter for b2."""
+        """Getter  b2."""
         return self.__b2
 
     @property
     def A2(self):
-        """Getter for A2."""
+        """Getter  A2."""
         return self.__A2
