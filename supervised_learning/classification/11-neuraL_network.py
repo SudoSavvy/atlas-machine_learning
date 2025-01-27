@@ -2,7 +2,6 @@
 """
 Defines a neural network with one hidden layer  binary classification.
 """
-
 import numpy as np
 
 
