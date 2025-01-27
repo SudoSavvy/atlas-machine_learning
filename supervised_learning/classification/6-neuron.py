@@ -56,4 +56,11 @@ class Neuron:
             self.__W -= alpha * dW
             self.__b -= alpha * db
         self.forward_prop(X)
-        return np.round(self.__A), self.cost(Y, self.__A)
+        A = np.round(self.__A)
+        cost = self.cost(Y, self.__A)
+        return A, cost
+
+    def evaluate(self, X, Y):
+        self.forward_prop(X)
+        cost = self.cost(Y, self.__A)
+        return np.round(self.__A), cost
