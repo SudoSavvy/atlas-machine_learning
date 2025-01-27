@@ -81,10 +81,12 @@ class NeuralNetwork:
 
         Parameters:
         X (numpy.ndarray): Input data with shape (nx, m),
-                           where nx is the number of features and m is the number of examples.
+                           where nx is the number of features and
+                           m is the number of examples.
 
         Returns:
-        tuple: Activated outputs  the hidden layer (__A1) and the output neuron (__A2).
+        tuple: Activated outputs  the hidden layer (__A1) and the
+        output neuron (__A2).
         """
         # Calculate the activated output  the hidden layer
         Z1 = np.matmul(self.__W1, X) + self.__b1
@@ -101,8 +103,10 @@ class NeuralNetwork:
         Calculates the cost of the model using logistic regression.
 
         Parameters:
-        Y (numpy.ndarray): Correct labels  the input data with shape (1, m).
-        A (numpy.ndarray): Activated output of the neuron  each example with shape (1, m).
+        Y (numpy.ndarray): Correct labels  the input data with shape
+        (1, m).
+        A (numpy.ndarray): Activated output of the neuron  each example
+        with shape (1, m).
 
         Returns:
         float: The cost of the model.
