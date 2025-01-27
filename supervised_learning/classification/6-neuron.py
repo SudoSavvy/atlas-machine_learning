@@ -28,10 +28,6 @@ class Neuron:
     def A(self):
         return self.__A
 
-    def forward_prop(self, X):
-        """Perform forward propagation."""
-        self.__A = 1 / (1 + 2.71828**-Z)  # Sigmoid activation
-        return self.__A
 
     def train(self, X, Y):
         """Train the neuron."""
