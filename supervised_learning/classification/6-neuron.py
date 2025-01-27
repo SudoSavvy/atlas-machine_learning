@@ -53,6 +53,6 @@ class Neuron:
             dZ = self.__A - Y
             dW = np.dot(X, dZ.T) / X.shape[1]
             db = np.sum(dZ) / X.shape[1]
-            self.__W -= alpha * dW.T
+            self.__W -= alpha * dW
             self.__b -= alpha * db
         return self.__A, self.cost(Y, self.__A)
