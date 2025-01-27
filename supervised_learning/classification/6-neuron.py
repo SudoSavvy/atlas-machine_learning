@@ -40,20 +40,17 @@ class Neuron:
         gradient_b = 0
         total_cost = 0
 
+        # Single loop for training
         for i in range(len(X)):
-            # Forward propagation
+            # Forward propagation and gradient calculation in one step
             Z = sum(self.__W[0][j] * X[i][j] for j in range(len(X[i]))) + self.__b
             A = 1 / (1 + 2.71828**-Z)
-
-            # Compute gradients
             dZ = A - Y[i]
             gradient_W = [gradient_W[j] + dZ * X[i][j] for j in range(len(X[i]))]
             gradient_b += dZ
-
-            # Compute cost (binary cross-entropy)
             total_cost += -(Y[i] * (2.71828**-Z) + (1 - Y[i]) * (1 - 2.71828**-Z))
 
-        # Update weights and bias
+        # Update weights and bias after loop
         self.__W[0] = [self.__W[0][j] - 0.01 * gradient_W[j] / len(X) for j in range(len(self.__W[0]))]
         self.__b -= 0.01 * gradient_b / len(X)
 
