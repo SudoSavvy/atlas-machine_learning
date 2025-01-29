@@ -7,14 +7,14 @@ class DeepNeuralNetwork:
     
     Attributes:
         __L (int): Number of layers in the network.
-        __cache (dict): A dictionary that stores intermediary values (e.g., activations) for each layer.
-        __weights (dict): A dictionary that stores weights and biases for each layer.
+        __cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
+        __weights (dict): A dictionary that stores weights and biases each layer.
     
     Methods:
         __init__(self, nx, layers): Initializes the deep neural network with given parameters.
-        get_L(self): Getter method for the number of layers.
-        get_cache(self): Getter method for the cache.
-        get_weights(self): Getter method for the weights.
+        get_L(self): Getter method the number of layers.
+        get_cache(self): Getter method the cache.
+        get_weights(self): Getter method the weights.
     """
     
     def __init__(self, nx, layers):
@@ -37,12 +37,12 @@ class DeepNeuralNetwork:
         
         # Initialize private attributes
         self.__L = len(layers)  # Number of layers
-        self.__cache = {}       # Cache for activations
+        self.__cache = {}       # Cache activations
         self.__weights = {}     # Weights and biases dictionary
         
-        # Initialize weights and biases for each layer
+        # Initialize weights and biases each layer
         for l in range(1, self.__L + 1):
-            # He initialization for weights (Wl)
+            # He initialization weights (Wl)
             if l == 1:
                 self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
             else:
@@ -52,13 +52,13 @@ class DeepNeuralNetwork:
             self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
     def get_L(self):
-        """Getter method for the number of layers."""
+        """Getter method the number of layers."""
         return self.__L
 
     def get_cache(self):
-        """Getter method for the cache."""
+        """Getter method the cache."""
         return self.__cache
 
     def get_weights(self):
-        """Getter method for the weights and biases."""
+        """Getter method the weights and biases."""
         return self.__weights
