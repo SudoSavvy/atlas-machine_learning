@@ -1,62 +1,16 @@
-#!/usr/bin/env python3
-import numpy as np
+# Let's assume you want a network with 5 input features and 3 layers.
+nx = 5  # Number of input features
+sizes = [5, 4, 3, 1]  # Number of neurons in each layer
 
+# Initialize the network
+d = DeepNeuralNetwork(nx, sizes)
 
-class DeepNeuralNetwork:
-    """
-    Class that defines a deep neural network binary classification.
-    """
+# Create some sample input data X with shape (nx, m) where m is the number of examples
+X = np.random.randn(nx, 10)
 
-    def __init__(self, layers):
-        """
-        Initializes the Deep Neural Network.
-        
-        layers (list): A list representing the number of neurons in each layer.
-        """
-        self.__L = len(layers)  # Number of layers
-        self.__cache = {}  # Cache dictionary
-        self.__weights = {}  # Weights dictionary
-        self.__initialize_weights(layers)
+# Perform forward propagation
+A, cache = d.forward_prop(X)
 
-    def __initialize_weights(self, layers):
-        """
-        Initializes the weights and biases each layer of the neural network.
-        
-        layers (list): A list representing the number of neurons in each layer.
-        """
-        for l in range(1, self.__L):
-            self.__weights["W" + str(l)] = np.random.randn(layers[l], layers[l - 1]) * 0.01
-            self.__weights["b" + str(l)] = np.zeros((layers[l], 1))
-
-    def sigmoid(self, Z):
-        """
-        Sigmoid activation function.
-        
-        Z (ndarray): The input to the sigmoid function.
-        
-        Returns:
-        ndarray: The result of applying the sigmoid activation.
-        """
-        return 1 / (1 + np.exp(-Z))
-
-    def forward_prop(self, X):
-        """
-        Calculates the forward propagation of the neural network.
-        
-        X (ndarray): The input data, with shape (nx, m), where:
-            - nx is the number of input features
-            - m is the number of examples
-        
-        Returns:
-        A (ndarray): The output of the neural network.
-        cache (dict): A dictionary with the activated outputs of each layer.
-        """
-        self.__cache["A0"] = X  # Save the input data in the cache
-        
-        A = X
-        for l in range(1, self.__L):
-            Z = np.dot(self.__weights["W" + str(l)], A) + self.__weights["b" + str(l)]
-            A = self.sigmoid(Z)  # Apply sigmoid activation
-            self.__cache["A" + str(l)] = A  # Save activated output to the cache
-
-        return A, self.__cache
+# Print the output
+print("Output of the network:")
+print(A)
