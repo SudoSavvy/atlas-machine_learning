@@ -40,7 +40,7 @@ class DeepNeuralNetwork:
             raise TypeError("layers must be a list of positive integers")
 
         # Check if all elements are positive integers
-        if any(not isinstance(x, int) or x <= 0 for x in layers):
+        if len(layers) > 0 and any(map(lambda x: not isinstance(x, int) or x <= 0, layers)):
             raise TypeError("layers must be a list of positive integers")
 
         # Initialize private attributes
