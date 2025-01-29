@@ -26,7 +26,7 @@ class DeepNeuralNetwork:
             raise ValueError("nx must be a positive integer")
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if any(type(l) is not int or l <= 0 for l in layers):
+        if any(map(lambda l: not isinstance(l, int) or l <= 0, layers)):
             raise TypeError("layers must be a list of positive integers")
 
         self.L = len(layers)  # Number of layers
@@ -38,4 +38,4 @@ class DeepNeuralNetwork:
         for l, nodes in enumerate(layers, 1):
             self.weights[f"W{l}"] = np.random.randn(nodes, prev_nodes) * np.sqrt(2 / prev_nodes)
             self.weights[f"b{l}"] = np.zeros((nodes, 1))
-            prev_nodes = nodes  # Update for next layer
+            prev_nodes = nodes  # Update  next layer
