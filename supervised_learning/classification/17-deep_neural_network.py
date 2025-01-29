@@ -35,6 +35,14 @@ class DeepNeuralNetwork:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         
+        # Validate layers
+        if not isinstance(layers, list):
+            raise TypeError("layers must be a list of positive integers")
+
+        # Check if all elements are positive integers
+        if any(not isinstance(x, int) or x <= 0 for x in layers):
+            raise TypeError("layers must be a list of positive integers")
+
         # Initialize private attributes
         self.__L = len(layers)  # Number of layers
         self.__cache = {}       # Cache activations
