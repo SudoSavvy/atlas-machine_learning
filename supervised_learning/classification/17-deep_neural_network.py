@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+import numpy as np
+
+class DeepNeuralNetwork:
+    """
+    DeepNeuralNetwork class defines a deep neural network performing binary classification.
+    
+    Attributes:
+        __L (int): Number of layers in the network.
+        __cache (dict): A dictionary that stores intermediary values (e.g., activations) for each layer.
+        __weights (dict): A dictionary that stores weights and biases for each layer.
+    
+    Methods:
+        __init__(self, nx, layers): Initializes the deep neural network with given parameters.
+        get_L(self): Getter method for the number of layers.
+        get_cache(self): Getter method for the cache.
+        get_weights(self): Getter method for the weights.
+    """
+    
+    def __init__(self, nx, layers):
+        """
+        Initializes the DeepNeuralNetwork with the number of input features and layers.
+        
+        Args:
+            nx (int): The number of input features.
+            layers (list): A list representing the number of nodes in each layer of the network.
+        
+        Raises:
+            TypeError: If nx is not an integer or if layers is not a list of positive integers.
+            ValueError: If nx is less than 1 or if any layer in layers is not a positive integer.
+        """
+        # Validate nx
+        if not isinstance(nx, int):
+            raise TypeError("nx must be an integer")
+        if nx < 1:
+            raise ValueError("nx must be a positive integer")
+        
+        # Validate layers
+        if not isinstance(layers, list):
+            raise TypeError("layers must be a list of positive integers")
+        if not all(isinstance(x, int) and x > 0 for x in layers):
+            raise TypeError("layers must be a list of positive integers")
+        
+        # Initialize private attributes
+        self.__L = len(layers)  # Number of layers
+        self.__cache = {}       # Cache for activations
+        self.__weights = {}     # Weights and biases dictionary
+        
+        # Initialize weights and biases for each layer
+        for l in range(1, self.__L + 1):
+            # He initialization for weights (Wl)
+            if l == 1:
+                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
+            else:
+                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
+            
+            # Biases initialized to 0
+            self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
+
+    def get_L(self):
+        """Getter method for the number of layers."""
+        return self.__L
+
+    def get_cache(self):
+        """Getter method for the cache."""
+        return self.__cache
+
+    def get_weights(self):
+        """Getter method for the weights and biases."""
+        return self.__weights
