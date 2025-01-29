@@ -70,11 +70,3 @@ class DeepNeuralNetwork:
     def get_weights(self):
         """Getter method the weights and biases."""
         return self.__weights
-
-
-# Example usage:
-if __name__ == "__main__":
-    d = DeepNeuralNetwork(nx=5, layers=[3, 2])
-    
-    # Accessing the cache via getter method instead of direct access
-    print(sorted(d.get_cache().items()))  # This should now work without errors.
