@@ -4,19 +4,19 @@ import numpy as np
 class DeepNeuralNetwork:
     """
     DeepNeuralNetwork class defines a deep neural network performing binary classification.
-    
+
     Attributes:
         L (int): Number of layers in the network.
         cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
         weights (dict): A dictionary that stores weights and biases each layer.
-    
+
     Methods:
         __init__(self, nx, layers): Initializes the deep neural network with given parameters.
         get_L(self): Getter method the number of layers.
         getcache(self): Getter method the cache.
         getweights(self): Getter method the weights.
     """
-    
+
     def __init__(self, nx, layers):
         """
         Initializes the DeepNeuralNetwork with the number of input features and layers.
@@ -60,6 +60,34 @@ class DeepNeuralNetwork:
             
             # Biases initialized to 0
             self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
+
+    def forward_prop(self, X):
+        """
+        Implements forward propagation for the neural network.
+        
+        Arguments:
+            X (numpy.ndarray): The input data of shape (nx, m) where:
+                - nx is the number of features
+                - m is the number of examples
+                
+        Returns:
+            A (numpy.ndarray): The activated output of the last layer.
+            self.__cache (dict): A dictionary that stores the activations of each layer.
+        """
+        A = X  # Input is the activation of the 0th layer (i.e., A0)
+        self.__cache["A0"] = A  # Store A0 (input) in cache
+        
+        for l in range(1, self.__L + 1):
+            W = self.__weights[f'W{l}']
+            b = self.__weights[f'b{l}']
+            
+            Z = np.dot(W, A) + b  # Compute Z (linear part)
+            A = 1 / (1 + np.exp(-Z))  # Apply sigmoid activation function
+            
+            self.__cache[f"A{l}"] = A  # Store the activation of layer l in cache
+        
+        return A, self.__cache  # Return the final output and cache
+
 
     def get_L(self):
         """Getter method the number of layers."""
