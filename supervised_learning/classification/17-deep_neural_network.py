@@ -6,7 +6,7 @@ class DeepNeuralNetwork:
     DeepNeuralNetwork class defines a deep neural network performing binary classification.
     
     Attributes:
-        __L (int): Number of layers in the network.
+        L (int): Number of layers in the network.
         cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
         weights (dict): A dictionary that stores weights and biases each layer.
     
@@ -46,12 +46,12 @@ class DeepNeuralNetwork:
 
 
         # Initialize private attributes
-        self.__L = len(layers)  # Number of layers
+        self.L = len(layers)  # Number of layers
         self.cache = {}       # Cache activations
         self.weights = {}     # Weights and biases dictionary
         
         # Initialize weights and biases each layer
-        for l in range(1, self.__L + 1):
+        for l in range(1, self.L + 1):
             # He initialization weights (Wl)
             if l == 1:
                 self.weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
@@ -63,7 +63,7 @@ class DeepNeuralNetwork:
 
     def get_L(self):
         """Getter method the number of layers."""
-        return self.__L
+        return self.L
 
     def get_cache(self):
         """Getter method the cache."""
