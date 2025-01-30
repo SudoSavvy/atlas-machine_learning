@@ -51,7 +51,7 @@ class DeepNeuralNetwork:
         self.__weights = {}     # Weights and biases dictionary
         
         # Initialize weights and biases each layer
-        for l in range(1, self.L + 1):
+        for l in range(1, self.__L + 1):
             # He initialization weights (Wl)
             if l == 1:
                 self.weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
