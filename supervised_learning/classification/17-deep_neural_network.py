@@ -62,7 +62,7 @@ class DeepNeuralNetwork:
             self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
             # Initially, assign a placeholder value to each layer in __cache
-            self.__cache[f'A{l}'] = np.zeros((layers[l - 1], 1))  # This is a placeholder for each activation
+            self.__cache[f'A{l}'] = np.zeros((layers[l - 1], 1))  # This is a placeholder each activation
 
 
     def get_L(self):
