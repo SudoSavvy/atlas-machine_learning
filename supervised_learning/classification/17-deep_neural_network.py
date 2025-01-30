@@ -46,9 +46,9 @@ class DeepNeuralNetwork:
 
 
         # Initialize private attributes
-        self.L = len(layers)  # Number of layers
-        self.cache = {}       # Cache activations
-        self.weights = {}     # Weights and biases dictionary
+        self.__L = len(layers)  # Number of layers
+        self.__cache = {}       # Cache activations
+        self.__weights = {}     # Weights and biases dictionary
         
         # Initialize weights and biases each layer
         for l in range(1, self.L + 1):
