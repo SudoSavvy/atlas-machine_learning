@@ -4,12 +4,12 @@ import numpy as np
 class DeepNeuralNetwork:
     """
     DeepNeuralNetwork class defines a deep neural network performing binary classification.
-    
+
     Attributes:
         L (int): Number of layers in the network.
         cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
         weights (dict): A dictionary that stores weights and biases each layer.
-    
+
     Methods:
         init(self, nx, layers): Initializes the deep neural network with given parameters.
         get_L(self): Getter method the number of layers.
@@ -20,11 +20,11 @@ class DeepNeuralNetwork:
     def __init__(self, nx, layers):
         """
         Initializes the DeepNeuralNetwork with the number of input features and layers.
-        
+    
         Args:
             nx (int): The number of input features.
             layers (list): A list representing the number of nodes in each layer of the network.
-        
+
         Raises:
             TypeError: If nx is not an integer or if layers is not a list of positive integers.
             ValueError: If nx is less than 1 or if any layer in layers is not a positive integer.
