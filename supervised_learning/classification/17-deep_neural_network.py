@@ -76,15 +76,8 @@ class DeepNeuralNetwork:
         """
         A = X  # Input is the activation of the 0th layer (i.e., A0)
         self.__cache["A0"] = A  # Store A0 (input) in cache
-        
-        for l in range(1, self.__L + 1):
-            W = self.__weights[f'W{l}']
-            b = self.__weights[f'b{l}']
-            
-            Z = np.dot(W, A) + b  # Compute Z (linear part)
-            A = 1 / (1 + np.exp(-Z))  # Apply sigmoid activation function
-            
-            self.__cache[f"A{l}"] = A  # Store the activation of layer l in cache
+
+        self.__cache[f"A{l}"] = A  # Store the activation of layer l in cache
         
         return A, self.__cache  # Return the final output and cache
 
