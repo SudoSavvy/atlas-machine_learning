@@ -54,12 +54,12 @@ class DeepNeuralNetwork:
         for l in range(1, self.__L + 1):
             # He initialization weights (Wl)
             if l == 1:
-                self.weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
+                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
             else:
-                self.weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
+                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
             
             # Biases initialized to 0
-            self.weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
+            self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
     def get_L(self):
         """Getter method the number of layers."""
