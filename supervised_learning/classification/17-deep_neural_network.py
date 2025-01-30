@@ -72,3 +72,15 @@ class DeepNeuralNetwork:
     def get_weights(self):
         """Getter method the weights and biases."""
         return self.__weights
+
+# Create a test instance
+d = DeepNeuralNetwork(5, [3, 2, 1])  # Example for 5 input features and 3 layers
+
+# Use the getter methods to access the attributes
+print("Weights:")
+for k, v in sorted(d.get_weights().items()):
+    print(f"{k} {v}")
+
+print("\nCache:")
+for k, v in sorted(d.get_cache().items()):
+    print(f"{k} {v}")
