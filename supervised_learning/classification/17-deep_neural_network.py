@@ -63,12 +63,12 @@ class DeepNeuralNetwork:
 
     def get_L(self):
         """Getter method the number of layers."""
-        return self.L
+        return self.__L
 
     def get_cache(self):
         """Getter method the cache."""
-        return self.cache
+        return self.__cache
 
     def get_weights(self):
         """Getter method the weights and biases."""
-        return self.weights
+        return self.__weights
