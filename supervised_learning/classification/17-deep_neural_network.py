@@ -40,8 +40,10 @@ class DeepNeuralNetwork:
             raise TypeError("layers must be a list of positive integers")
 
         # Check if all elements are positive integers
-        if len(layers) > 0 and any(map(lambda x: not isinstance(x, int) or x <= 0, layers)):
+        if (not isinstance(layers, list) or len(layers) == 0 or 
+            list(map(lambda x: isinstance(x, int) and x > 0, layers)).count(False) > 0):
             raise TypeError("layers must be a list of positive integers")
+
 
         # Initialize private attributes
         self.__L = len(layers)  # Number of layers
