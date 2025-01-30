@@ -8,7 +8,7 @@ class DeepNeuralNetwork:
     Attributes:
         __L (int): Number of layers in the network.
         cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
-        _weights (dict): A dictionary that stores weights and biases each layer.
+        weights (dict): A dictionary that stores weights and biases each layer.
     
     Methods:
         __init__(self, nx, layers): Initializes the deep neural network with given parameters.
@@ -54,12 +54,12 @@ class DeepNeuralNetwork:
         for l in range(1, self.__L + 1):
             # He initialization weights (Wl)
             if l == 1:
-                self._weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
+                self.weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
             else:
-                self._weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
+                self.weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
             
             # Biases initialized to 0
-            self._weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
+            self.weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
     def get_L(self):
         """Getter method the number of layers."""
@@ -71,4 +71,4 @@ class DeepNeuralNetwork:
 
     def get_weights(self):
         """Getter method the weights and biases."""
-        return self._weights
+        return self.weights
