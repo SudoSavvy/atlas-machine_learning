@@ -46,7 +46,7 @@ class DeepNeuralNetwork:
 
 
         # Initialize private attributes
-        self.__L = len(layers)  # Number of layers
+        self.L = len(layers)  # Number of layers
         self.cache = {}       # Cache activations
         self.weights = {}     # Weights and biases dictionary
         
@@ -61,14 +61,14 @@ class DeepNeuralNetwork:
             # Biases initialized to 0
             self.weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
-        def get_L(self):
-            """Getter method the number of layers."""
-            return self.__L
+    def get_L(self):
+        """Getter method the number of layers."""
+        return self.L
 
-        def get_cache(self):
-            """Getter method the cache."""
-            return self.cache
+    def get_cache(self):
+        """Getter method the cache."""
+        return self.cache
 
-        def get_weights(self):
-            """Getter method the weights and biases."""
-            return self.weights
+    def get_weights(self):
+        """Getter method the weights and biases."""
+        return self.weights
