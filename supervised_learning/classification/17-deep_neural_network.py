@@ -61,9 +61,6 @@ class DeepNeuralNetwork:
             # Biases initialized to 0
             self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
-            # Initially, assign a placeholder value to each layer in __cache
-            self.cache[f'A{l}'] = np.zeros((layers[l - 1], 1))
-
     def get_L(self):
         """Getter method the number of layers."""
         return self.__L
