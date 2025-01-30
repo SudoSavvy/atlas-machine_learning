@@ -7,13 +7,13 @@ class DeepNeuralNetwork:
     
     Attributes:
         __L (int): Number of layers in the network.
-        _cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
+        cache (dict): A dictionary that stores intermediary values (e.g., activations) each layer.
         __weights (dict): A dictionary that stores weights and biases each layer.
     
     Methods:
         __init__(self, nx, layers): Initializes the deep neural network with given parameters.
         get_L(self): Getter method the number of layers.
-        get_cache(self): Getter method the cache.
+        getcache(self): Getter method the cache.
         get_weights(self): Getter method the weights.
     """
     
@@ -47,7 +47,7 @@ class DeepNeuralNetwork:
 
         # Initialize private attributes
         self.__L = len(layers)  # Number of layers
-        self._cache = {}       # Cache activations
+        self.cache = {}       # Cache activations
         self.__weights = {}     # Weights and biases dictionary
         
         # Initialize weights and biases each layer
@@ -67,7 +67,7 @@ class DeepNeuralNetwork:
 
     def get_cache(self):
         """Getter method the cache."""
-        return self._cache
+        return self.cache
 
     def get_weights(self):
         """Getter method the weights and biases."""
