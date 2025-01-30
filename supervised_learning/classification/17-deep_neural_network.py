@@ -61,25 +61,8 @@ class DeepNeuralNetwork:
             # Biases initialized to 0
             self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
 
-    def forward_prop(self, X):
-        """
-        Implements forward propagation for the neural network.
-        
-        Arguments:
-            X (numpy.ndarray): The input data of shape (nx, m) where:
-                - nx is the number of features
-                - m is the number of examples
-                
-        Returns:
-            A (numpy.ndarray): The activated output of the last layer.
-            self.__cache (dict): A dictionary that stores the activations of each layer.
-        """
-        A = X  # Input is the activation of the 0th layer (i.e., A0)
-        self.__cache["A0"] = A  # Store A0 (input) in cache
-
-        self.__cache[f"A{l}"] = A  # Store the activation of layer l in cache
-        
-        return A, self.__cache  # Return the final output and cache
+            # Initially, assign a placeholder value to each layer in __cache
+            self.__cache[f'A{l}'] = np.zeros((layers[l - 1], 1))  # This is a placeholder for each activation
 
 
     def get_L(self):
