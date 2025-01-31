@@ -218,3 +218,16 @@ class DeepNeuralNetwork:
                 return pickle.load(f)
         except FileNotFoundError:
             return None
+
+# Set numpy print options to match the desired output format
+np.set_printoptions(precision=8, suppress=False, linewidth=200, threshold=np.inf)
+
+# Example usage
+if __name__ == "__main__":
+    np.random.seed(0)
+    X = np.random.randn(5, 100)
+    Y = np.random.randint(0, 2, (1, 100))
+    deep = DeepNeuralNetwork(5, [3, 1])
+    deep.train(X, Y, iterations=100, alpha=0.05, verbose=False, graph=False)
+    print(deep.L)
+    print(deep.cache['A0'])
