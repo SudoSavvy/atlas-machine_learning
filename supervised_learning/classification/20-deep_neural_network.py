@@ -72,4 +72,4 @@ class DeepNeuralNetwork:
         """
         Placeholder forward propagation method. Should be implemented properly.
         """
-        return np.random.rand(1, X.shape[1])  # Dummy output for evaluation testing
+        return np.random.rand(1, X.shape[1])  # Dummy output evaluation testing
