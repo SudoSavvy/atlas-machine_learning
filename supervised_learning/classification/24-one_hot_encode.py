@@ -26,12 +26,12 @@ def one_hot_encode(Y, classes):
 
     # Initialize the one-hot matrix with zeros
     m = Y.shape[0]
-    one_hot = np.zeros((classes, m), dtype=int)
+    one_hot = np.zeros((classes, m), dtype=float)
 
     # Fill the one-hot matrix
     for i, label in enumerate(Y):
         if label < 0:
             return None  # Ensure labels are non-negative
-        one_hot[label, i] = 1
+        one_hot[label, i] = 1.0
 
     return one_hot
