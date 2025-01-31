@@ -220,7 +220,7 @@ class DeepNeuralNetwork:
             return None
 
 # Set numpy print options to match the desired output format
-np.set_printoptions(precision=8, suppress=False, linewidth=200, threshold=np.inf)
+np.set_printoptions(precision=8, suppress=False, linewidth=75, threshold=np.inf)
 
 # Example usage
 if __name__ == "__main__":
