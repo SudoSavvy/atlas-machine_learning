@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class NeuralNetwork:
-    """Defines a neural network with one hidden layer for binary classification."""
+    """Defines a neural network with one hidden layer binary classification."""
 
     def __init__(self, nx, nodes):
         """Initialize the neural network."""
