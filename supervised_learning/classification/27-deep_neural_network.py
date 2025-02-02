@@ -1,101 +1,98 @@
-#!/usr/bin/env python3
 import numpy as np
-import pickle
-
 
 class DeepNeuralNetwork:
-    """Deep neural network class for multiclass classification."""
-    
     def __init__(self, nx, layers):
-        """Initialize the deep neural network."""
-        if not isinstance(nx, int) or nx < 1:
+        if type(nx) is not int or nx < 1:
             raise TypeError("nx must be a positive integer")
-        if (not isinstance(layers, list) or len(layers) < 1
-                or not all(isinstance(l, int) and l > 0 for l in layers)):
+        if type(layers) is not list or len(layers) < 1:
             raise TypeError("layers must be a list of positive integers")
-
+        
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
         
-        for i in range(self.L):
-            self.weights['b' + str(i + 1)] = np.zeros((layers[i], 1))
-            if i == 0:
-                self.weights['W' + str(i + 1)] = (
-                    np.random.randn(layers[i], nx) * np.sqrt(2 / nx)
-                )
+        for l in range(self.L):
+            if type(layers[l]) is not int or layers[l] < 1:
+                raise TypeError("layers must be a list of positive integers")
+            
+            key_W = "W" + str(l + 1)
+            key_b = "b" + str(l + 1)
+            
+            if l == 0:
+                self.weights[key_W] = np.random.randn(layers[l], nx) * np.sqrt(2 / nx)
             else:
-                self.weights['W' + str(i + 1)] = (
-                    np.random.randn(layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
-                )
+                self.weights[key_W] = np.random.randn(layers[l], layers[l - 1]) * np.sqrt(2 / layers[l - 1])
+            
+            self.weights[key_b] = np.zeros((layers[l], 1))
     
     def forward_prop(self, X):
-        """Perform forward propagation."""
-        self.cache['A0'] = X
-        for i in range(1, self.L):
-            Z = (self.weights['W' + str(i)] @ self.cache['A' + str(i - 1)] +
-                 self.weights['b' + str(i)])
-            self.cache['A' + str(i)] = 1 / (1 + np.exp(-Z))  # Sigmoid activation
+        self.cache["A0"] = X
         
-        ZL = (self.weights['W' + str(self.L)] @ self.cache['A' + str(self.L - 1)] +
-              self.weights['b' + str(self.L)])
-        self.cache['A' + str(self.L)] = np.exp(ZL) / np.sum(np.exp(ZL), axis=0, keepdims=True)  # Softmax
+        for l in range(1, self.L + 1):
+            W = self.weights["W" + str(l)]
+            b = self.weights["b" + str(l)]
+            A_prev = self.cache["A" + str(l - 1)]
+            Z = np.matmul(W, A_prev) + b
+            
+            if l == self.L:
+                A = np.exp(Z) / np.sum(np.exp(Z), axis=0, keepdims=True)  # Softmax
+            else:
+                A = 1 / (1 + np.exp(-Z))  # Sigmoid
+            
+            self.cache["A" + str(l)] = A
         
-        return self.cache['A' + str(self.L)], self.cache
+        return A, self.cache
     
     def cost(self, Y, A):
-        """Compute cost using cross-entropy loss."""
         m = Y.shape[1]
-        return -np.sum(Y * np.log(A)) / m
+        return -np.sum(Y * np.log(A)) / m  # Cross-entropy loss
     
     def evaluate(self, X, Y):
-        """Evaluate the model."""
         A, _ = self.forward_prop(X)
         predictions = np.argmax(A, axis=0)
-        labels = np.argmax(Y, axis=0)
-        accuracy = np.mean(predictions == labels)
-        return predictions, self.cost(Y, A)
+        cost = self.cost(Y, A)
+        return predictions, cost
     
     def gradient_descent(self, Y, alpha=0.05):
-        """Perform one iteration of gradient descent."""
         m = Y.shape[1]
-        dZL = self.cache['A' + str(self.L)] - Y
+        A_L = self.cache["A" + str(self.L)]
+        dZ = A_L - Y  # Derivative of cross-entropy loss with softmax
         
-        for i in reversed(range(1, self.L + 1)):
-            dW = (dZL @ self.cache['A' + str(i - 1)].T) / m
-            db = np.sum(dZL, axis=1, keepdims=True) / m
+        for l in reversed(range(1, self.L + 1)):
+            A_prev = self.cache["A" + str(l - 1)]
+            W = self.weights["W" + str(l)]
+            dW = np.matmul(dZ, A_prev.T) / m
+            db = np.sum(dZ, axis=1, keepdims=True) / m
             
-            if i > 1:
-                dZL = (self.weights['W' + str(i)].T @ dZL) * (self.cache['A' + str(i - 1)] * (1 - self.cache['A' + str(i - 1)]))
+            if l > 1:
+                dZ = np.matmul(W.T, dZ) * (A_prev * (1 - A_prev))  # Sigmoid derivative
             
-            self.weights['W' + str(i)] -= alpha * dW
-            self.weights['b' + str(i)] -= alpha * db
+            self.weights["W" + str(l)] -= alpha * dW
+            self.weights["b" + str(l)] -= alpha * db
     
-    def train(self, X, Y, iterations=5000, alpha=0.05):
-        """Train the deep neural network."""
-        if not isinstance(iterations, int) or iterations <= 0:
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True):
+        if type(iterations) is not int or iterations <= 0:
             raise TypeError("iterations must be a positive integer")
-        if not isinstance(alpha, (int, float)) or alpha <= 0:
-            raise TypeError("alpha must be positive")
+        if type(alpha) is not float or alpha <= 0:
+            raise TypeError("alpha must be a positive float")
         
-        for _ in range(iterations):
+        costs = []
+        
+        for i in range(iterations):
             self.forward_prop(X)
             self.gradient_descent(Y, alpha)
+            
+            if verbose and i % 100 == 0:
+                cost = self.cost(Y, self.cache["A" + str(self.L)])
+                print(f"Cost after {i} iterations: {cost}")
+                costs.append(cost)
+        
+        if graph:
+            import matplotlib.pyplot as plt
+            plt.plot(range(0, iterations, 100), costs, 'b-')
+            plt.xlabel('Iterations')
+            plt.ylabel('Cost')
+            plt.title('Training Cost')
+            plt.show()
         
         return self.evaluate(X, Y)
-    
-    def save(self, filename):
-        """Save the instance to a file."""
-        if not filename.endswith('.pkl'):
-            filename += '.pkl'
-        with open(filename, 'wb') as f:
-            pickle.dump(self, f)
-    
-    @staticmethod
-    def load(filename):
-        """Load an instance from a file."""
-        try:
-            with open(filename, 'rb') as f:
-                return pickle.load(f)
-        except FileNotFoundError:
-            return None
