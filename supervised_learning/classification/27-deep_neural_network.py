@@ -1,98 +1,199 @@
 #!/usr/bin/env python3
+"""Class DeepNeuralNetwork that defines a deep neural
+network performing binary classification based on
+26-deep_neural_network.py"""
 import numpy as np
+import matplotlib.pyplot as plt
+import pickle
 
 
-# Print the hardcoded arrays and values
-print("[[0. 0. 0. ... 0. 0. 0.]")
-print(" [0. 0. 0. ... 0. 0. 0.]")
-print(" [0. 0. 0. ... 0. 0. 0.]")
-print(" ...")
-print(" [0. 0. 0. ... 0. 0. 0.]")
-print(" [0. 0. 0. ... 0. 0. 0.]")
-print(" [0. 0. 0. ... 0. 0. 0.]]")
-print("2.8885271908")
-print("3")
+class DeepNeuralNetwork():
+    """Class DeepNeuralNetwork"""
+    def __init__(self, nx, layers):
+        """Class constructor"""
+        if not isinstance(nx, int):
+            raise TypeError("nx must be an integer")
+        if nx < 1:
+            raise ValueError("nx must be a positive integer")
+        if not isinstance(layers, list) or len(layers) == 0:
+            raise TypeError("layers must be a list of positive integers")
 
-# Print the hardcoded activation and weight matrices
-print("A0 [[ 2.43077119 -0.25209213  0.10960984 ... -2.38669774  1.22217056")
-print("  -0.81391201]")
-print(" [ 0.95626186 -0.63851056 -0.14312642 ...  0.47870605  0.14082715")
-print("  -0.2099986 ]")
-print(" [-0.12050664 -0.57882578  0.42386759 ...  0.94370965  1.20016024")
-print("   1.65674391]")
-print(" ...")
-print(" [ 0.04777554  0.78151222 -0.36113363 ... -0.15233111 -0.61483366")
-print("   0.37410297]")
-print(" [-1.09953486 -0.16910587 -0.52158786 ... -0.27282578  0.94495003")
-print("   1.41573263]")
-print(" [-0.3419462   0.14523648  0.9790861  ...  0.30883339  0.8662593")
-print("   1.00697056]]")
+        # setting up the private instance attributes
+        self.__L = len(layers)
+        self.__cache = {}
+        self.__weights = {}
 
-print("A1 [[0.72555168 0.08396292 0.51283407 ... 0.75893256 0.05638466 0.27249193]")
-print(" [0.66036304 0.52421261 0.71206634 ... 0.24975055 0.44539919 0.40041514]")
-print(" [0.28975891 0.17778729 0.0547445  ... 0.64416258 0.31177139 0.07671215]")
-print(" ...")
-print(" [0.45533936 0.37188221 0.20191066 ... 0.06114023 0.84004909 0.76479447]")
-print(" [0.409738   0.69098374 0.87606194 ... 0.47971568 0.79293135 0.1822147 ]")
-print(" [0.64307137 0.72621497 0.57088454 ... 0.84031289 0.44032482 0.76171039]]")
+        # initializing all weights and biases of the network
+        prev_nodes = nx
+        for i, nodes in enumerate(layers, 1):
+            if not isinstance(nodes, int) or nodes <= 0:
+                raise TypeError("layers must be a list of positive integers")
 
-print("A2 [[0.65589434 0.6574236  0.73728947 ... 0.71713961 0.66778295 0.59985993]")
-print(" [0.33995483 0.28687183 0.3507672  ... 0.25078697 0.36570139 0.38828251]")
-print(" [0.77744993 0.76487701 0.76717061 ... 0.71159175 0.66734048 0.71408816]")
-print(" ...")
-print(" [0.48507386 0.53788636 0.52613792 ... 0.42311934 0.31270399 0.32619748]")
-print(" [0.54019192 0.65749428 0.54867149 ... 0.69173649 0.48440929 0.64298308]")
-print(" [0.27473455 0.2193667  0.2966777  ... 0.3218927  0.35324636 0.34296863]]")
+            # setting variable key to the current layer index
+            key = f'{i}'
+            # using the He et al. method to initialize weights
+            self.weights[f'W{key}'] = np.random.randn(nodes, prev_nodes
+                                                      ) * np.sqrt(
+                                                          2 / prev_nodes)
+            # initialized to 0s and saved the weights dictionary
+            self.weights[f'b{key}'] = np.zeros((nodes, 1))
+            prev_nodes = nodes
 
-print("A3 [[0.04507723 0.0481217  0.05252156 ... 0.05708238 0.05512699 0.04682857]")
-print(" [0.0522353  0.05385968 0.05724533 ... 0.06491004 0.06950101 0.05807395]")
-print(" [0.07164872 0.06760018 0.0579073  ... 0.07741964 0.06533384 0.05683842]")
-print(" ...")
-print(" [0.03809279 0.04203855 0.04635835 ... 0.03480721 0.04529755 0.04485195]")
-print(" [0.05542446 0.04594526 0.04622719 ... 0.05678369 0.05385889 0.05620584]")
-print(" [0.05057172 0.05405429 0.05319133 ... 0.05144815 0.05728644 0.04992655]]")
+    @property
+    def L(self):
+        """use getter method for L"""
+        return self.__L
 
-print("W1 [[-0.13328922 -0.0129472  -0.17307591 ... -0.00201806 -0.06612657")
-print("  -0.00807753]")
-print(" [ 0.00771094 -0.01678969  0.0431026  ... -0.23410499  0.08254461")
-print("  -0.21126322]")
-print(" [-0.01580022  0.1592483   0.11710514 ... -0.10298052  0.13072675")
-print("  -0.32279214]")
-print(" ...")
-print(" [-0.13890352 -0.06160666  0.06744108 ...  0.0930695  -0.10660476")
-print("  -0.01121009]")
-print(" [ 0.06058991 -0.25600681 -0.01456159 ...  0.05675281 -0.14685586")
-print("  -0.16176661]")
-print(" [-0.03279346  0.22090689 -0.11846918 ... -0.01963321  0.02619213")
-print("   0.02931534]]")
+    @property
+    def cache(self):
+        """use getter method for cache"""
+        return self.__cache
 
-print("W2 [[-0.100117   -0.01563497 -0.11080016 ... -0.18542698 -0.05011585")
-print("  -0.16533596]")
-print(" [ 0.18172787  0.06686987 -0.00952655 ...  0.1153218   0.13387018")
-print("  -0.01658683]")
-print(" [-0.15571087 -0.13020375 -0.04920689 ...  0.18930256  0.04615525")
-print("  -0.1624321 ]")
-print(" ...")
-print(" [ 0.18255144 -0.32305391 -0.05674825 ... -0.39176369 -0.02387949")
-print("   0.10961464]")
-print(" [ 0.0830125  -0.14043018 -0.01580879 ... -0.13628677  0.08885367")
-print("  -0.05591719]")
-print(" [-0.13160744 -0.09019231 -0.16286691 ...  0.3690893  -0.00780224")
-print("  -0.00909022]]")
+    @property
+    def weights(self):
+        """use getter method for weights"""
+        return self.__weights
+    
+    def forward_prop(self, X):
+        """calculates the forward propagation of the neural
+        network"""
+        # using the sigmoid function
+        def sig(Z):
+            """sigmoid function"""
+            return 1 / (1 + np.exp(-Z))
 
-print("W3 [[ 2.10279418e-01  1.00137246e-01 -1.62494862e-01 -1.05149729e-01")
-print("  -1.60390800e-04  3.21697049e-01 -3.81666189e-01  4.67045231e-01")
-print("   1.69228393e-01  2.38041352e-02 -2.27794164e-01  2.95105786e-01")
-print("  -1.23726049e-01 -6.80670141e-02  6.27327951e-02 -1.65308499e-01")
-print("  -1.85092188e-01 -2.70546433e-01 -8.64436895e-02  7.41670840e-03")
-print("   3.54626074e-02  1.37273068e-02 -2.48218687e-01  5.52079990e-03")
-print("  -1.22729010e-01 -1.05061812e-01  1.60489182e-02 -1.21996875e-01")
-print("  -1.01433697e-01  1.41289342e-01 -3.64117312e-02  2.07510413e-01")
-print("   1.50864146e-01  1.60481135e-01  3.12125706e-02 -1.50931479e-02")
-print("   2.21390390e-01 -2.12289927e-02  1.56126691e-01 -2.02906125e-01")
-print("  -4.06459719e-01 -2.27155841e-01 -2.46574644e-01  1.11395159e-01")
-print("  -4.23901399e-02  5.83451940e-02  1.31647848e-02  1.61520810e-03")
-print("   2.46425937e-01 -1.12676161e-01]")
-print(" [-2.10291435e-01 -1.33266948e-01  1.12618887e-01  1.90392784e-01")
-print("   9.74080348e-02 -2.46307020e-01 -1.22658049e-01 -2.73754231e-01")
-print("   2.89561268e-01 -3.21520122e-01  8.57910...")
+        # X saved to the cache dictionary using key A0
+        self.__cache['A0'] = X
+
+        # iterating each layer by applying W, b, Z
+        A = X
+        for i in range(1, self.__L + 1):
+            W = self.__weights[f'W{i}']
+            b = self.__weights[f'b{i}']
+            Z = np.dot(W, A) + b
+            A = sig(Z)
+            self.__cache[f'A{i}'] = A
+
+        # returning output and the cache that was updated
+        return A, self.__cache
+
+    def cost(self, Y, A):
+        """calculates the cost of the model using a logistic
+        regression"""
+        log_A = np.log(A)
+        log_1_minus_A = np.log(1.0000001 - A)
+        loss = Y * log_A + (1 - Y) * log_1_minus_A
+
+        # calculate the average cost
+        return -np.sum(loss) / A.shape[1]
+
+    def evaluate(self, X, Y):
+        """evaluates the neural network's predictions and returns
+        the neuron's prediction and the cost of the network"""
+        A, _ = self.forward_prop(X)
+        prediction = (A >= 0.5).astype(int)
+        cost = self.cost(Y, A)
+        return prediction, cost
+
+    def gradient_descent(self, Y, cache, alpha=0.05):
+        """calculates one pass of gradient descent on the neural
+        network
+
+        Y = correct labels
+        cache = dictionary containing all the intermediary values
+        alpha = learning rate
+
+        """
+        # fetching the training examples m and the number of layers L
+        m = Y.shape[1]
+        L = self.__L
+
+        # loop back performing the backpropagation
+        for i in range(L, 0, -1):
+            # checks if the layer is the outer layer L, if so dz is dA
+            if i == L:
+                dA = cache[f'A{L}'] - Y
+                dz = dA
+            else:
+                # if it isn't the outer layer, the hidden layer, compute dz
+                A = cache[f'A{i}']
+                dz = dA * A * (1 - A)
+
+            # calculates the gradient weights and biases then get avg
+            dw = np.matmul(dz, cache[f'A{i-1}'].T) / m
+            db = np.sum(dz, axis=1, keepdims=True) / m
+
+            # calculate and backpropagate the error in upcoming layer
+            dA = np.matmul(self.__weights[f'W{i}'].T, dz)
+
+            # updating weights and biases of the current layer
+            self.__weights[f'W{i}'] -= alpha * dw
+            self.__weights[f'b{i}'] -= alpha * db
+
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+        """trains the deep neural network and returns the
+        evaluation of the training data after iterations of
+        training have occurred"""
+        if not isinstance(iterations, int):
+            raise TypeError("iterations must be an integer")
+        if iterations <= 0:
+            raise ValueError("iterations must be a positive integer")
+        if not isinstance(alpha, float):
+            raise TypeError("alpha must be a float")
+        if alpha <= 0:
+            raise ValueError("alpha must be positive")
+        if graph or verbose:
+            if not isinstance(step, int):
+                raise TypeError("step must be an integer")
+            if step < 1 or step > iterations:
+                raise ValueError("step must be positive and <= iterations")
+
+        # storing costs and iterations to a list for the graph
+        if graph:
+            g_costs = []
+            g_iters = []
+
+        # using forward propagation and gradient descent
+        for iteration in range(iterations + 1):
+            # calling forward prop and returning values
+            A, cache = self.forward_prop(X)
+            self.gradient_descent(Y, cache, alpha)
+
+            # calculates the current cost and print at the set interval
+            if verbose and iteration % step == 0:
+                cost = self.cost(Y, A)
+                print(f"Cost after {iteration} iterations: {cost}")
+
+            # appending cost and iteration to the list
+            if graph and iteration % step == 0:
+                cost = self.cost(Y, A)
+                g_costs.append(cost)
+                g_iters.append(iteration)
+
+        # plotting the graph and then displaying
+        if graph:
+            plt.plot(g_costs, g_iters, color='blue')
+            plt.title('Training Cost')
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.show()
+
+        # returning the evaluation of the training data
+        return self.evaluate(X, Y)
+
+    def save(self, filename):
+        """saves the instance object to a file in pickle format"""
+        if not filename.endswith('.pkl'):
+            filename += '.pkl'
+        with open(filename, 'wb') as pf:
+            pickle.dump(self, pf)
+
+    def load(filename):
+        """loads a pickled DeepNeuralNetwork object"""
+        if not filename.endswith('pkl'):
+            filename += 'pkl'
+        try:
+            with open(filename, 'rb') as pf:
+                return pickle.load(pf)
+        except FileNotFoundError:
+            return None
