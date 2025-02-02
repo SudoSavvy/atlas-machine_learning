@@ -16,7 +16,7 @@ class DeepNeuralNetwork:
             key_W = f"W{l + 1}"
             key_b = f"b{l + 1}"
             
-            self.weights[key_W] = np.random.randn(layers[l], nx if l == 0 else layers[l - 1]) * np.sqrt(2 / (nx if l == 0 else layers[l - 1]))
+            self.weights[key_W] = np.random.randn(layers[l], nx if l == 0 else layers[l - 1]) * np.sqrt(1 / (nx if l == 0 else layers[l - 1]))
             self.weights[key_b] = np.zeros((layers[l], 1))
     
     def forward_prop(self, X):
