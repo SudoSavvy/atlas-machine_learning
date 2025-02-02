@@ -1,161 +1,204 @@
 #!/usr/bin/env python3
+""" Module creating a class NeuronalNetwork"""
 import numpy as np
 
-class DeepNeuralNetwork:
-    """
-    Defines a deep neural network performing binary classification.
-    """
+
+class DeepNeuralNetwork():
+    """ Defines a deep neural network performing binary classification"""
 
     def __init__(self, nx, layers):
         """
-        Initializes the DeepNeuralNetwork.
+        Initiates  Deep Neural Network class
 
-        Args:
-            nx (int): Number of input features.
-            layers (list): List representing the number of nodes in each layer.
+        Inputs:
+        nx - number of input features
+            * must be integer of value greater than or equal to 1
+        layers - number of nodes found in the each layer of the network
+            * must be a list of positive integers
 
-        Raises:
-            TypeError: If nx is not an integer or layers is not a list of positive integers.
-            ValueError: If nx is less than 1 or any layer in layers is not a positive integer.
+        Public Instance Attributes:
+        L - The number of layers in the neural network
+        cache - A dictionary holding all intermediary values of the network.
+            Empty on instantiation
+        weights - Dictionary holding all weights and biases of the network
         """
-        if not isinstance(nx, int):
+
+        nx_is_int = isinstance(nx, int)
+        nx_ge_1 = nx >= 1
+        layers_is_list_ints = isinstance(layers, list)
+
+        if not nx_is_int:
             raise TypeError("nx must be an integer")
-        if nx < 1:
+        if not nx_ge_1:
             raise ValueError("nx must be a positive integer")
+        if not layers_is_list_ints:
+            raise TypeError("layers must be a list of positive integers")
+        if len(layers) < 1:
+            raise TypeError("layers must be a list of positive integers")
 
-        self.__L = len(layers)  # Number of layers
-        self.__cache = {}  # Stores intermediate values (Z, A) during forward propagation
-        self.__weights = {}  # Stores weights and biases
+        # Private Properties
+        self.__L = len(layers)
+        self.__cache = {}
+        self.__weights = {}
 
-        # Initialize weights and biases using He initialization (1 loop)
-        for l in range(1, self.__L + 1):
-            if l == 1:
-                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
-            else:
-                self.__weights[f'W{l}'] = np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2])
-            self.__weights[f'b{l}'] = np.zeros((layers[l - 1], 1))
+        previous = nx
+        weights_dict = {}
+
+        for l in range(self.L):
+            if not isinstance(layers[l], int) or layers[l] < 0:
+                raise TypeError("layers must be a list of positive integers")
+
+            weights_dict["W{}".format(l + 1)] = (np.random.randn(layers[l],
+                                                                 previous) *
+                                                 np.sqrt(2 / previous))
+            weights_dict["b{}".format(l + 1)] = np.zeros((layers[l], 1))
+            previous = layers[l]
+
+        self.__weights = weights_dict
 
     @property
     def L(self):
-        """Getter the number of layers."""
+        """Getter for the private L attribute"""
         return self.__L
 
     @property
-    def cache(self):
-        """Getter the cache."""
-        return self.__cache
+    def weights(self):
+        """Getter for the private weights attribute"""
+        return self.__weights
 
     @property
-    def weights(self):
-        """Getter the weights."""
-        return self.__weights
+    def cache(self):
+        """Getter for the private cache attribute"""
+        return self.__cache
 
     def forward_prop(self, X):
         """
-        Performs forward propagation on the neural network.
+        Calculates the forward propogation of the neural network. All neurons
+        will use the sigmoid activation function.
 
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
+        Inputs:
+        X - a numpy.ndarray that contains the input data.
+
+        Updates:
+        __cache as a ditionary with the output of each layer as A{l}
 
         Returns:
-            tuple: (A, cache), where A is the output of the last layer and cache contains all intermediate values.
-        """
-        self.__cache['A0'] = X  # Input layer
-        # Forward propagation (1 loop)
-        for l in range(1, self.__L + 1):
-            Z = np.dot(self.__weights[f'W{l}'], self.__cache[f'A{l-1}']) + self.__weights[f'b{l}']
-            A = 1 / (1 + np.exp(-Z))  # Sigmoid activation
-            self.__cache[f'A{l}'] = A
-            self.__cache[f'Z{l}'] = Z
-        return self.__cache[f'A{self.__L}'], self.__cache
+        Returns the output of the neural network"""
+        self.__cache["A0"] = X
+        for layer in range(self.L):
+            W = self.weights["W{}".format(layer + 1)]
+            b = self.weights["b{}".format(layer + 1)]
+            current_A = self.cache["A{}".format(layer)]
+            z = np.matmul(W, current_A) + b
+            A = 1 / (1 + (np.exp(-z)))
+            self.__cache["A{}".format(layer + 1)] = A
+        return (A, self.cache)
 
     def cost(self, Y, A):
         """
-        Computes the cost of the model using logistic regression.
+        Calculates the cost of the model using logistic regression.
+        C=-1/m(∑(Y⋅log(A)+((1-Y)⋅log(1-A))))
+        where m is the number of training examples
 
-        Args:
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            A (numpy.ndarray): Activated output of the neuron with shape (1, m).
+        Inputs:
+        Y represents the correct labels for input data,
+        A represents the activated output of the neuron for each example
 
         Returns:
-            float: Cost value.
+        C - Cost of the model
         """
         m = Y.shape[1]
-        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
-        return cost
+        C = -1 / m * (np.sum((Y * np.log(A)) + ((1 - Y) *
+                                                np.log(1.0000001 - A))))
+        return C
 
     def evaluate(self, X, Y):
         """
-        Evaluates the neural network's predictions.
+        Evaluates the neuron's predictions.
+        Prediction is forward propagation evaluated to a 1 or a 0.
 
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-            Y (numpy.ndarray): Correct labels with shape (1, m).
+        Inputs:
+        X - numpy.ndarray which contains the input data
+        Y - numpy.ndarray which contains the correct labels for the input data
 
         Returns:
-            tuple: (Predictions, Cost value)
+        Returns the prediction and the cost of the network a tuple.
         """
-        A, _ = self.forward_prop(X)
-        cost = self.cost(Y, A)
-        predictions = (A >= 0.5).astype(int)
-        return predictions, cost
+
+        A, B = self.forward_prop(X)
+        predict = np.where(A >= 0.5, 1, 0)
+
+        C = self.cost(Y, A)
+        return (predict, C)
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
-        Calculates one pass of gradient descent on the neural network.
+        Calculates one pass of gradient descent on the neural network
 
-        Args:
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            cache (dict): Dictionary containing all the intermediary values of the network.
-            alpha (float): Learning rate.
+        Inputs:
+        Y - numpy.ndarray with correct labels for the input data
+        cache - dictionary containing all the intermediary
+            values of the network
+        alpha - the learning rate
 
         Updates:
-            The private attribute __weights.
+        __weights
         """
+
         m = Y.shape[1]
-        dZ = cache[f'A{self.__L}'] - Y  # Derivative of the cost with respect to Z in the output layer
-        # Backpropagation (1 loop)
-        for l in range(self.__L, 0, -1):
-            A_prev = cache[f'A{l-1}']
-            dW = np.dot(dZ, A_prev.T) / m
-            db = np.sum(dZ, axis=1, keepdims=True) / m
-            if l > 1:
-                dZ = np.dot(self.__weights[f'W{l}'].T, dZ) * (A_prev * (1 - A_prev))  # Derivative previous layer
-            self.__weights[f'W{l}'] -= alpha * dW
-            self.__weights[f'b{l}'] -= alpha * db
+
+        for layer in range(self.L, 0, -1):
+            A_current = self.cache["A{}".format(layer)]
+            A_previous = self.cache["A{}".format(layer - 1)]
+
+            if layer == self.__L:
+                dz = (A_current - Y)
+            else:
+                dz = dA_prev * (A_current * (1 - A_current))
+
+            dW = (1 / m) * (np.matmul(dz, A_previous.T))
+            db = (1 / m) * (np.sum(dz, axis=1, keepdims=True))
+
+            W = self.weights["W{}".format(layer)]
+            dA_prev = np.matmul(W.T, dz)
+
+            self.__weights["W{}".format(layer)] = (
+                self.__weights["W{}".format(layer)] - (alpha * dW))
+            self.__weights["b{}".format(layer)] = (
+                self.__weights["b{}".format(layer)] - (alpha * db))
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """
-        Trains the deep neural network.
+        Trains the neuron
 
-        Args:
-            X (numpy.ndarray): Input data with shape (nx, m).
-            Y (numpy.ndarray): Correct labels with shape (1, m).
-            iterations (int): Number of iterations to train over.
-            alpha (float): Learning rate.
+        Inputs:
+        X - numpy.ndarray which contains the input data
+        Y - numpy.ndarray which contains the correct labels for the input data
+        iterations - number of iterations to train over
+            * Must be a positive integer
+        alpha - learning rate
+            * Must be a positive float value
 
-        Raises:
-            TypeError: If iterations is not an integer or alpha is not a float.
-            ValueError: If iterations is not positive or alpha is not positive.
-
-        Returns:
-            tuple: (Predictions, Cost value) after training.
+        Return:
+        Returns the evaluation of the training data after all iterations
         """
-        # Validate iterations
-        if not isinstance(iterations, int):
-            raise TypeError("iterations must be an integer")
-        if iterations <= 0:
-            raise ValueError("iterations must be a positive integer")
 
-        # Validate alpha
-        if not isinstance(alpha, float):
+        iter_is_int = isinstance(iterations, int)
+        iter_is_pos = iterations > 0
+        alpha_is_float = isinstance(alpha, float)
+        alpha_is_pos = alpha > 0
+
+        if not iter_is_int:
+            raise TypeError("iterations must be an integer")
+        if not iter_is_pos:
+            raise ValueError("iterations must be a positive integer")
+        if not alpha_is_float:
             raise TypeError("alpha must be a float")
-        if alpha <= 0:
+        if not alpha_is_pos:
             raise ValueError("alpha must be positive")
 
-        # Training loop (1 loop)
-        for _ in range(iterations):
-            A, cache = self.forward_prop(X)
-            self.gradient_descent(Y, cache, alpha)
+        for i in range(0, iterations):
+            self.forward_prop(X)
+            self.gradient_descent(Y, self.cache, alpha)
 
         return self.evaluate(X, Y)
