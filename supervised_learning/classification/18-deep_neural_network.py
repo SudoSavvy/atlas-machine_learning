@@ -1,63 +1,95 @@
 #!/usr/bin/env python3
+""" Module creating a class NeuronalNetwork"""
 import numpy as np
 
 
-class DeepNeuralNetwork:
-    """
-    Class that defines a deep neural network for binary classification.
-    """
+class DeepNeuralNetwork():
+    """ Defines a deep neural network performing binary classification"""
 
     def __init__(self, nx, layers):
         """
-        Initializes the Deep Neural Network.
-        
-        nx (int): The number of input features.
-        layers (list): A list representing the number of neurons in each layer.
-        """
-        self.__L = len(layers)  # Number of layers
-        self.__cache = {}  # Cache dictionary
-        self.__weights = {}  # Weights dictionary
-        self.__initialize_weights(layers)
+        Initiates  Deep Neural Network class
 
-    def __initialize_weights(self, layers):
-        """
-        Initializes the weights and biases for each layer of the neural network.
-        
-        layers (list): A list representing the number of neurons in each layer.
-        """
-        for l in range(1, self.__L):
-            self.__weights["W" + str(l)] = np.random.randn(layers[l], layers[l - 1]) * 0.01
-            self.__weights["b" + str(l)] = np.zeros((layers[l], 1))
+        Inputs:
+        nx - number of input features
+            * must be integer of value greater than or equal to 1
+        layers - number of nodes found in the each layer of the network
+            * must be a list of positive integers
 
-    def sigmoid(self, Z):
+        Public Instance Attributes:
+        L - The number of layers in the neural network
+        cache - A dictionary holding all intermediary values of the network.
+            Empty on instantiation
+        weights - Dictionary holding all weights and biases of the network
         """
-        Sigmoid activation function.
-        
-        Z (ndarray): The input to the sigmoid function.
-        
-        Returns:
-        ndarray: The result of applying the sigmoid activation.
-        """
-        return 1 / (1 + np.exp(-Z))
+
+        nx_is_int = isinstance(nx, int)
+        nx_ge_1 = nx >= 1
+        layers_is_list_ints = isinstance(layers, list)
+
+        if not nx_is_int:
+            raise TypeError("nx must be an integer")
+        if not nx_ge_1:
+            raise ValueError("nx must be a positive integer")
+        if not layers_is_list_ints:
+            raise TypeError("layers must be a list of positive integers")
+        if len(layers) < 1:
+            raise TypeError("layers must be a list of positive integers")
+
+        # Private Properties
+        self.__L = len(layers)
+        self.__cache = {}
+        self.__weights = {}
+
+        previous = nx
+        weights_dict = {}
+
+        for l in range(self.L):
+            if not isinstance(layers[l], int) or layers[l] < 0:
+                raise TypeError("layers must be a list of positive integers")
+
+            weights_dict["W{}".format(l + 1)] = (np.random.randn(layers[l],
+                                                                 previous) *
+                                                 np.sqrt(2 / previous))
+            weights_dict["b{}".format(l + 1)] = np.zeros((layers[l], 1))
+            previous = layers[l]
+
+        self.__weights = weights_dict
+
+    @property
+    def L(self):
+        """Getter for the private L attribute"""
+        return self.__L
+
+    @property
+    def weights(self):
+        """Getter for the private weights attribute"""
+        return self.__weights
+
+    @property
+    def cache(self):
+        """Getter for the private cache attribute"""
+        return self.__cache
 
     def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neural network.
-        
-        X (ndarray): The input data, with shape (nx, m), where:
-            - nx is the number of input features
-            - m is the number of examples
-        
-        Returns:
-        A (ndarray): The output of the neural network.
-        cache (dict): A dictionary with the activated outputs of each layer.
-        """
-        self.__cache["A0"] = X  # Save the input data in the cache
-        
-        A = X
-        for l in range(1, self.__L):
-            Z = np.dot(self.__weights["W" + str(l)], A) + self.__weights["b" + str(l)]
-            A = self.sigmoid(Z)  # Apply sigmoid activation
-            self.__cache["A" + str(l)] = A  # Save activated output to the cache
+        Calculates the forward propogation of the neural network. All neurons
+        will use the sigmoid activation function.
 
-        return A, self.__cache
+        Inputs:
+        X - a numpy.ndarray that contains the input data.
+
+        Updates:
+        __cache as a ditionary with the output of each layer as A{l}
+
+        Returns:
+        Returns the output of the neural network"""
+        self.__cache["A0"] = X
+        for layer in range(self.L):
+            W = self.weights["W{}".format(layer + 1)]
+            b = self.weights["b{}".format(layer + 1)]
+            current_A = self.cache["A{}".format(layer)]
+            z = np.matmul(W, current_A) + b
+            A = 1 / (1 + (np.exp(-z)))
+            self.__cache["A{}".format(layer + 1)] = A
+        return (A, self.cache)
