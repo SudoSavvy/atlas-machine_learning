@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 import numpy as np
 
 class DeepNeuralNetwork:
     def __init__(self, nx, layers):
-        if type(nx) is not int or nx < 1:
+        if not isinstance(nx, int) or nx < 1:
             raise TypeError("nx must be a positive integer")
-        if type(layers) is not list or len(layers) < 1:
+        if not isinstance(layers, list) or len(layers) < 1 or not all(isinstance(l, int) and l > 0 for l in layers):
             raise TypeError("layers must be a list of positive integers")
         
         self.L = len(layers)
@@ -13,34 +12,22 @@ class DeepNeuralNetwork:
         self.weights = {}
         
         for l in range(self.L):
-            if type(layers[l]) is not int or layers[l] < 1:
-                raise TypeError("layers must be a list of positive integers")
+            key_W = f"W{l + 1}"
+            key_b = f"b{l + 1}"
             
-            key_W = "W" + str(l + 1)
-            key_b = "b" + str(l + 1)
-            
-            if l == 0:
-                self.weights[key_W] = np.random.randn(layers[l], nx) * np.sqrt(2 / nx)
-            else:
-                self.weights[key_W] = np.random.randn(layers[l], layers[l - 1]) * np.sqrt(2 / layers[l - 1])
-            
+            self.weights[key_W] = np.random.randn(layers[l], nx if l == 0 else layers[l - 1]) * np.sqrt(2 / (nx if l == 0 else layers[l - 1]))
             self.weights[key_b] = np.zeros((layers[l], 1))
     
     def forward_prop(self, X):
         self.cache["A0"] = X
         
         for l in range(1, self.L + 1):
-            W = self.weights["W" + str(l)]
-            b = self.weights["b" + str(l)]
-            A_prev = self.cache["A" + str(l - 1)]
+            W, b = self.weights[f"W{l}"], self.weights[f"b{l}"]
+            A_prev = self.cache[f"A{l - 1}"]
             Z = np.matmul(W, A_prev) + b
             
-            if l == self.L:
-                A = np.exp(Z) / np.sum(np.exp(Z), axis=0, keepdims=True)  # Softmax
-            else:
-                A = 1 / (1 + np.exp(-Z))  # Sigmoid
-            
-            self.cache["A" + str(l)] = A
+            A = np.exp(Z) / np.sum(np.exp(Z), axis=0, keepdims=True) if l == self.L else 1 / (1 + np.exp(-Z))
+            self.cache[f"A{l}"] = A
         
         return A, self.cache
     
@@ -50,31 +37,27 @@ class DeepNeuralNetwork:
     
     def evaluate(self, X, Y):
         A, _ = self.forward_prop(X)
-        predictions = np.argmax(A, axis=0)
-        cost = self.cost(Y, A)
-        return predictions, cost
+        return np.argmax(A, axis=0), self.cost(Y, A)
     
     def gradient_descent(self, Y, alpha=0.05):
         m = Y.shape[1]
-        A_L = self.cache["A" + str(self.L)]
-        dZ = A_L - Y  # Derivative of cross-entropy loss with softmax
+        dZ = self.cache[f"A{self.L}"] - Y
         
         for l in reversed(range(1, self.L + 1)):
-            A_prev = self.cache["A" + str(l - 1)]
-            W = self.weights["W" + str(l)]
-            dW = np.matmul(dZ, A_prev.T) / m
-            db = np.sum(dZ, axis=1, keepdims=True) / m
+            A_prev = self.cache[f"A{l - 1}"]
+            W = self.weights[f"W{l}"]
+            dW, db = np.matmul(dZ, A_prev.T) / m, np.sum(dZ, axis=1, keepdims=True) / m
             
             if l > 1:
-                dZ = np.matmul(W.T, dZ) * (A_prev * (1 - A_prev))  # Sigmoid derivative
+                dZ = np.matmul(W.T, dZ) * (A_prev * (1 - A_prev))
             
-            self.weights["W" + str(l)] -= alpha * dW
-            self.weights["b" + str(l)] -= alpha * db
+            self.weights[f"W{l}"] -= alpha * dW
+            self.weights[f"b{l}"] -= alpha * db
     
     def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True):
-        if type(iterations) is not int or iterations <= 0:
+        if not isinstance(iterations, int) or iterations <= 0:
             raise TypeError("iterations must be a positive integer")
-        if type(alpha) is not float or alpha <= 0:
+        if not isinstance(alpha, float) or alpha <= 0:
             raise TypeError("alpha must be a positive float")
         
         costs = []
@@ -84,7 +67,7 @@ class DeepNeuralNetwork:
             self.gradient_descent(Y, alpha)
             
             if verbose and i % 100 == 0:
-                cost = self.cost(Y, self.cache["A" + str(self.L)])
+                cost = self.cost(Y, self.cache[f"A{self.L}"])
                 print(f"Cost after {i} iterations: {cost}")
                 costs.append(cost)
         
