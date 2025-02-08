@@ -6,6 +6,7 @@ Module for calculating the accuracy of predictions using TensorFlow v1.
 
 import tensorflow.compat.v1 as tf
 
+
 def calculate_accuracy(y, y_pred):
     """
     Compute the accuracy of a prediction.
