@@ -19,4 +19,4 @@ def normalization_constants(x):
     """
     mean =np.mean(x,axis=0)
     std_dev = np.std(x, axis=0, ddof=0)
-    return mean,
+    return (mean, std_dev)
