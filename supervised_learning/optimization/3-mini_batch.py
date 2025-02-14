@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Function to calculate the normalization constants of a matrix.
+Functions to calculate the normalization constants of a matrix, normalize it,
+shuffle data points in two matrices consistently, and create mini-batches for training.
 """
 import numpy as np
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
-
-def normalization_constants(x):
+def normalization_constants(X):
     """
     Calculates the mean and standard deviation of each feature in a matrix.
 
@@ -18,10 +18,9 @@ def normalization_constants(x):
     tuple: A tuple containing the mean and standard deviation of each feature,
            respectively.
     """
-    mean = np.mean(x, axis=0)
-    std_dev = np.std(x, axis=0, ddof=0)
-    return (mean, std_dev)
-
+    mean = np.mean(X, axis=0)
+    std_dev = np.std(X, axis=0, ddof=0)
+    return mean, std_dev
 
 def normalize(X, m, s):
     """
@@ -31,16 +30,13 @@ def normalize(X, m, s):
     X (numpy.ndarray): A matrix of shape (d, nx) to normalize
         d is the number of data points
         nx is the number of features
-    m (numpy.ndarray): A numpy array of shape (nx,) containing
-    the mean of all features of X
-    s (numpy.ndarray): A numpy array of shape (nx,) containing
-    the standard deviation of all features of X
+    m (numpy.ndarray): A numpy array of shape (nx,) containing the mean of all features of X
+    s (numpy.ndarray): A numpy array of shape (nx,) containing the standard deviation of all features of X
 
     Returns:
     numpy.ndarray: The normalized X matrix
     """
     return (X - m) / s
-
 
 def shuffle_data(X, Y):
     """
@@ -60,7 +56,6 @@ def shuffle_data(X, Y):
     perm = np.random.permutation(X.shape[0])
     return X[perm], Y[perm]
 
-
 def create_mini_batches(X, Y, batch_size):
     """
     Creates mini-batches for training using mini-batch gradient descent.
@@ -77,13 +72,13 @@ def create_mini_batches(X, Y, batch_size):
     Returns:
     list: A list of mini-batches, each a tuple (X_batch, Y_batch)
     """
-    x_shuffled, y_shuffled = shuffle_data(X, Y)
+    X_shuffled, Y_shuffled = shuffle_data(X, Y)
     mini_batches = []
-    m - X.shape[0]
-
+    m = X.shape[0]
+    
     for i in range(0, m, batch_size):
         X_batch = X_shuffled[i:i + batch_size]
         Y_batch = Y_shuffled[i:i + batch_size]
         mini_batches.append((X_batch, Y_batch))
-
+    
     return mini_batches
