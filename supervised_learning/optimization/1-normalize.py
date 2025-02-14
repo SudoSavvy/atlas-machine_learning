@@ -21,6 +21,7 @@ def normalization_constants(x):
     std_dev = np.std(x, axis=0, ddof=0)
     return (mean, std_dev)
 
+
 def normalize(X, m, s):
     """
     Normalizes (standardizes) a matrix.
