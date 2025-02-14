@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Functions to calculate the normalization constants of a matrix, normalize it,
-shuffle data points in two matrices consistently, and create mini-batches for training.
+Functions to calculate the normalization constants of a matrix,
+normalize it,
+shuffle data points in two matrices consistently, and create
+mini-batches for training.
 """
 import numpy as np
 shuffle_data = __import__('2-shuffle_data').shuffle_data
@@ -15,7 +17,8 @@ def normalization_constants(X):
                         data points and nx is the number of features.
 
     Returns:
-    tuple: A tuple containing the mean and standard deviation of each feature,
+    tuple: A tuple containing the mean and standard deviation of
+    each feature,
            respectively.
     """
     mean = np.mean(X, axis=0)
@@ -30,8 +33,10 @@ def normalize(X, m, s):
     X (numpy.ndarray): A matrix of shape (d, nx) to normalize
         d is the number of data points
         nx is the number of features
-    m (numpy.ndarray): A numpy array of shape (nx,) containing the mean of all features of X
-    s (numpy.ndarray): A numpy array of shape (nx,) containing the standard deviation of all features of X
+    m (numpy.ndarray): A numpy array of shape (nx,) containing the
+    mean of all features of X
+    s (numpy.ndarray): A numpy array of shape (nx,) containing the
+    standard deviation of all features of X
 
     Returns:
     numpy.ndarray: The normalized X matrix
