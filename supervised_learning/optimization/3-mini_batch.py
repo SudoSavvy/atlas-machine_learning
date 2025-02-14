@@ -72,13 +72,17 @@ def create_mini_batches(X, Y, batch_size):
     Returns:
     list: A list of mini-batches, each a tuple (X_batch, Y_batch)
     """
+    # Shuffle the data and labels consistently
     X_shuffled, Y_shuffled = shuffle_data(X, Y)
+
     mini_batches = []
     m = X.shape[0]
-    
+
+    # Create mini-batches of the specified batch size
     for i in range(0, m, batch_size):
+        # Handle the last mini-batch, which may be smaller than batch_size
         X_batch = X_shuffled[i:i + batch_size]
         Y_batch = Y_shuffled[i:i + batch_size]
         mini_batches.append((X_batch, Y_batch))
-    
+
     return mini_batches
