@@ -8,6 +8,7 @@ mini-batches for training.
 import numpy as np
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
+
 def normalization_constants(X):
     """
     Calculates the mean and standard deviation of each feature in a matrix.
@@ -24,6 +25,7 @@ def normalization_constants(X):
     mean = np.mean(X, axis=0)
     std_dev = np.std(X, axis=0, ddof=0)
     return mean, std_dev
+
 
 def normalize(X, m, s):
     """
@@ -43,6 +45,7 @@ def normalize(X, m, s):
     """
     return (X - m) / s
 
+
 def shuffle_data(X, Y):
     """
     Shuffles the data points in two matrices the same way.
@@ -60,6 +63,7 @@ def shuffle_data(X, Y):
     """
     perm = np.random.permutation(X.shape[0])
     return X[perm], Y[perm]
+
 
 def create_mini_batches(X, Y, batch_size):
     """
