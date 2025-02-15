@@ -20,11 +20,11 @@ def moving_average(data, beta):
     moving_averages = []  # List to store moving average values
 
     for t in range(1, len(data) + 1):
-        v = beta * v + (1 - beta) * data[t - 1]  
+        v = beta * v + (1 - beta) * data[t - 1]
         # Compute weighted moving average
-        bias_correction = 1 - beta**t  
+        bias_correction = 1 - beta**t
         # Compute bias correction factor
-        moving_averages.append(v / bias_correction)  
+        moving_averages.append(v / bias_correction)
         # Apply correction and store result
 
     return moving_averages
@@ -41,6 +41,6 @@ if __name__ == "__main__":
     ]
     beta = 0.9  # Given weight
     result = moving_average(data, beta)
-    
+
     # Ensure the exact formatting of the desired output
     print(result)
