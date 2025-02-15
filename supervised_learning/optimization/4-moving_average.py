@@ -29,6 +29,7 @@ def moving_average(data, beta):
 
     return moving_averages
 
+
 # Exact input dataset to match expected output
 if __name__ == "__main__":
     data = [
