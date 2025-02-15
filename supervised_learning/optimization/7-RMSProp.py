@@ -18,7 +18,9 @@ def update_variables_RMSProp(alpha, beta2, epsilon, var, grad, s):
     Returns:
     tuple: Updated variable and the new second moment.
     """
-    s_new = beta2 * s + (1 - beta2) * (grad ** 2)  # Update second moment estimate
-    var_new = var - alpha * grad / (np.sqrt(s_new) + epsilon)  # Update variable
+    s_new = beta2 * s + (1 - beta2) * (grad ** 2)
+    # Update second moment estimate
+    var_new = var - alpha * grad / (np.sqrt(s_new) + epsilon)
+    # Update variable
 
     return var_new, s_new
