@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 def moving_average(data, beta):
     """
     Calculates the exponentially weighted moving average (EWMA) of a dataset
@@ -19,9 +20,12 @@ def moving_average(data, beta):
     moving_averages = []  # List to store moving average values
 
     for t in range(1, len(data) + 1):
-        v = beta * v + (1 - beta) * data[t - 1]  # Compute weighted moving average
-        bias_correction = 1 - beta**t  # Compute bias correction factor
-        moving_averages.append(v / bias_correction)  # Apply correction and store result
+        v = beta * v + (1 - beta) * data[t - 1]  
+        # Compute weighted moving average
+        bias_correction = 1 - beta**t  
+        # Compute bias correction factor
+        moving_averages.append(v / bias_correction)  
+        # Apply correction and store result
 
     return moving_averages
 
