@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 
+
 def learning_rate_decay(alpha, decay_rate, decay_step):
     """
     Creates a learning rate decay operation using inverse time decay.
