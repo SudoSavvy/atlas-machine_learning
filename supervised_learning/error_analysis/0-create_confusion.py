@@ -27,4 +27,5 @@ def create_confusion_matrix(labels, logits):
     for i in range(len(actual)):
         confusion[actual[i], predicted[i]] += 1.0
     
-    return confusion
+    # Ensure floating point format
+    return confusion.astype(float)
