@@ -77,14 +77,18 @@ def specificity(confusion):
 
 def f1_score(confusion):
     """
-    Calculates the F1 score for each class in a confusion matrix.
+    Calculates the F1 score for each class in a confusion
+    matrix.
 
     Args:
-        confusion (numpy.ndarray): A confusion matrix of shape (classes, classes),
-            where rows represent actual labels and columns represent predictions.
+        confusion (numpy.ndarray): A confusion matrix
+        of shape (classes, classes),
+            where rows represent actual labels and
+            columns represent predictions.
 
     Returns:
-        numpy.ndarray: An array of shape (classes,) containing the F1 score of
+        numpy.ndarray: An array of shape (classes,)
+        containing the F1 score of
             each class.
     """
     sens = sensitivity(confusion)
