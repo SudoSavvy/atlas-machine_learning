@@ -3,7 +3,6 @@ import numpy as np
 sensitivity = __import__('1-sensitivity').sensitivity
 precision = __import__('2-precision').precision
 
-
 def create_confusion_matrix(labels, logits):
     """
     Creates a confusion matrix.
@@ -26,8 +25,6 @@ def create_confusion_matrix(labels, logits):
         confusion[actual[i], predicted[i]] += 1.0
     return confusion
 
-
-
 def sensitivity(confusion):
     """
     Calculates the sensitivity for each class in a confusion matrix.
@@ -44,8 +41,6 @@ def sensitivity(confusion):
     false_negatives = np.sum(confusion, axis=1) - true_positives
     return true_positives / (true_positives + false_negatives)
 
-
-
 def precision(confusion):
     """
     Calculates the precision for each class in a confusion matrix.
@@ -61,8 +56,6 @@ def precision(confusion):
     true_positives = np.diag(confusion)
     false_positives = np.sum(confusion, axis=0) - true_positives
     return true_positives / (true_positives + false_positives)
-
-
 
 def specificity(confusion):
     """
@@ -81,8 +74,6 @@ def specificity(confusion):
     )
     false_positives = np.sum(confusion, axis=0) - np.diag(confusion)
     return true_negatives / (true_negatives + false_positives)
-
-
 
 def f1_score(confusion):
     """
