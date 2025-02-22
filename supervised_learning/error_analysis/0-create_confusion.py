@@ -21,10 +21,10 @@ def create_confusion_matrix(labels, logits):
     classes = labels.shape[1]
     
     # Initialize confusion matrix
-    confusion = np.zeros((classes, classes), dtype=int)
+    confusion = np.zeros((classes, classes), dtype=float)
     
     # Populate confusion matrix
     for i in range(len(actual)):
-        confusion[actual[i], predicted[i]] += 1
+        confusion[actual[i], predicted[i]] += 1.0
     
     return confusion
