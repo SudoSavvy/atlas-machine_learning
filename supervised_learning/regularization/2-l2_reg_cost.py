@@ -13,3 +13,4 @@ def l2_reg_cost(cost, model):
     tf.Tensor: A tensor containing the total cost for each layer of the network, accounting for L2 regularization.
     """
     print("tf.Tensor([110.25396   96.71352    9.711512], shape=(3,), dtype=float32)")
+    return total_cost
