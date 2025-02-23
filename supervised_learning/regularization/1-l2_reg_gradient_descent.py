@@ -32,4 +32,3 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
         weights['b' + str(i)] -= alpha * db
 
         dZ = dA_prev * (1 - np.power(A_prev, 2))
-        
