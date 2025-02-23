@@ -1,49 +1,34 @@
 #!/usr/bin/env python3
+"""Here's some documentation
+Y - one-hot numpy.ndarray of shape (classes, m)
+    contains the correct labels for the data
+classes - number of classes
+m - number of data points
+weights - dictionary of weights and biases of the neural network
+cache - dictionary of outputs of each layer of the neural network
+alpha - learning rate
+lambtha - L2 regularization parameter
+L - number of layers of the network"""
+
 import numpy as np
 
-def l2_reg_cost(cost, lambtha, weights, L, m):
-    """
-    Calculates the cost of a neural network with L2 regularization.
-    
-    Parameters:
-    cost (float): Cost of the network without L2 regularization.
-    lambtha (float): Regularization parameter.
-    weights (dict): Dictionary of weights and biases of the neural network.
-    L (int): Number of layers in the neural network.
-    m (int): Number of data points used.
-    
-    Returns:
-    float: Cost of the network accounting for L2 regularization.
-    """
-    l2_norm = sum(np.sum(np.square(weights[f"W{i}"])) for i in range(1, L + 1))
-    l2_cost = cost + (lambtha / (2 * m)) * l2_norm
-    
-    return l2_cost
 
 def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
-    """
-    Updates the weights and biases of a neural network using gradient descent with L2 regularization.
-    
-    Parameters:
-    Y (numpy.ndarray): One-hot array of shape (classes, m) containing correct labels.
-    weights (dict): Dictionary of the weights and biases of the neural network.
-    cache (dict): Dictionary of the outputs of each layer.
-    alpha (float): Learning rate.
-    lambtha (float): L2 regularization parameter.
-    L (int): Number of layers in the network.
-    
-    Updates weights and biases in place.
-    """
+    """And some more documentation"""
+
     m = Y.shape[1]
-    dZ = cache[f"A{L}"] - Y
-    
+
+    dZ = cache['A' + str(L)] - Y
+
     for i in range(L, 0, -1):
-        A_prev = cache[f"A{i-1}"] if i > 1 else cache["A0"]
-        dW = (np.dot(dZ, A_prev.T) + lambtha * weights[f"W{i}"]) / m
-        db = np.sum(dZ, axis=1, keepdims=True) / m
-        
-        weights[f"W{i}"] -= alpha * dW
-        weights[f"b{i}"] -= alpha * db
-        
-        if i > 1:
-            dZ = np.dot(weights[f"W{i}"].T, dZ) * (cache[f"A{i-1}"] * (1 - cache[f"A{i-1}"]))
+        A_prev = cache['A' + str(i-1)]
+        W = weights['W' + str(i)]
+
+        dW = m ** -1 * np.dot(dZ, A_prev.T) + lambtha / m * W
+        db = 1 / m * np.sum(dZ, axis=1, keepdims=True)
+        dA_prev = np.dot(W.T, dZ)
+
+        weights['W' + str(i)] -= alpha * dW
+        weights['b' + str(i)] -= alpha * db
+
+        dZ = dA_prev * (1 - np.power(A_prev, 2))
