@@ -10,8 +10,7 @@ def l2_reg_cost(cost, model):
     model (tf.keras.Model): Keras model that includes layers with L2 regularization.
     
     Returns:
-    tf.Tensor: Total cost of the network, including L2 regularization.
+    tf.Tensor: A tensor containing the total cost for each layer of the network, accounting for L2 regularization.
     """
-    l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in model.trainable_variables if 'kernel' in var.name])
-    reg_cost = cost + tf.reduce_sum(model.losses)
+    reg_cost = cost + tf.add_n(model.losses)
     return reg_cost
