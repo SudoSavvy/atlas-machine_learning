@@ -1,77 +1,49 @@
 #!/usr/bin/env python3
+"""Gradient Descent with Dropout Module"""
 import numpy as np
 
-def dropout_forward_prop(X, weights, L, keep_prob):
-    """
-    Conducts forward propagation using Dropout.
-    
-    Parameters:
-    X (np.ndarray): Input data of shape (nx, m)
-    weights (dict): Dictionary containing weights and biases of the network
-    L (int): Number of layers in the network
-    keep_prob (float): Probability of keeping a node active during dropout
-    
-    Returns:
-    dict: Dictionary containing outputs and dropout masks for each layer
-    """
-    cache = {"A0": X}
-    
-    for l in range(1, L + 1):
-        W = weights[f"W{l}"]
-        b = weights[f"b{l}"]
-        A_prev = cache[f"A{l - 1}"]
-        Z = np.dot(W, A_prev) + b
-        
-        if l == L:
-            # Softmax activation for the last layer
-            exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
-            A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
-        else:
-            # ReLU activation function for hidden layers
-            A = np.maximum(0, Z)
-            # Dropout mask
-            D = np.random.rand(*A.shape) < keep_prob
-            A *= D  # Apply dropout
-            A /= keep_prob  # Scale activation values
-            cache[f"D{l}"] = D  # Store dropout mask
-        
-        cache[f"A{l}"] = A  # Store activation output
-    
-    return cache
 
 def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
+    """Function that updates the weights of a neural network with Dropout
+    regularization using gradient descent:
+
+    Y is a one-hot numpy.ndarray of shape (classes, m) that contains the
+    correct labels for the data
+    classes is the number of classes
+    m is the number of data points
+    weights is a dictionary of the weights and biases of the neural network
+    cache is a dictionary of the outputs and dropout masks of each layer of
+    the neural network
+    alpha is the learning rate
+    keep_prob is the probability that a node will be kept
+    L is the number of layers of the network
+    -> All layers use the tanh activation function except the last, which uses
+    the softmax activation function
+    -> The weights of the network should be updated in place
+
     """
-    Updates the weights of a neural network with Dropout regularization using gradient descent.
-    
-    Parameters:
-    Y (np.ndarray): One-hot numpy array of shape (classes, m) with correct labels
-    weights (dict): Dictionary containing weights and biases of the network
-    cache (dict): Dictionary containing outputs and dropout masks for each layer
-    alpha (float): Learning rate
-    keep_prob (float): Probability of keeping a node active during dropout
-    L (int): Number of layers in the network
-    
-    Returns:
-    None (weights are updated in place)
-    """
-    m = Y.shape[1]
-    dZ = cache[f"A{L}"] - Y  # Gradient of softmax loss
-    
-    for l in range(L, 0, -1):
-        A_prev = cache[f"A{l-1}"]
-        W = weights[f"W{l}"]
-        b = weights[f"b{l}"]
+    # calculate m as the inverse of the number of samples
+    m = 1 / Y.shape[1]
+    # compute dZ using values of cache
+    dZ = cache[f'A{L}'] - Y
+
+    # iterate over the layers in reverse backprop
+    for layer in reversed(range(1, L + 1)):
+        A_prev = cache[f'A{layer - 1}']
+        w, b = f'W{layer}', f'b{layer}'
+        dW = m * np.matmul(dZ, A_prev.T)
+        db = m * np.sum(dZ, axis=1, keepdims=True)
+
+        # if not the first layer, compute the gradient for prev layer
+        if layer > 1:
+            # backprop through linear component
+            dZ = np.matmul(weights[w].T, dZ)
+            # backprop using tanh
+            dZ *= (1 - np.power(A_prev, 2))
+            # apply dropout mask then scale
+            dZ *= (cache[f'D{layer - 1}'] / keep_prob)
+
+        # updates the weights and biases using gradient descent
+        weights[w] -= alpha * dW
+        weights[b] -= alpha * db
         
-        dW = np.dot(dZ, A_prev.T) / m
-        db = np.sum(dZ, axis=1, keepdims=True) / m
-        
-        if l > 1:
-            dA_prev = np.dot(W.T, dZ)
-            D = cache[f"D{l-1}"]
-            dA_prev *= D  # Apply dropout mask
-            dA_prev /= keep_prob  # Scale the gradient
-            dZ = dA_prev * (A_prev > 0)  # ReLU derivative
-        
-        # Update weights and biases
-        weights[f"W{l}"] -= alpha * dW
-        weights[f"b{l}"] -= alpha * db
