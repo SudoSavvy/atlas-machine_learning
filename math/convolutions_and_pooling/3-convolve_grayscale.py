@@ -31,11 +31,14 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     kh, kw = kernel.shape
     sh, sw = stride
     
-    if padding == 'same':
-        ph = ((h - 1) * sh + kh - h) // 2
-        pw = ((w - 1) * sw + kw - w) // 2
-    elif padding == 'valid':
-        ph, pw = 0, 0
+    if isinstance(padding, str):
+        if padding == 'same':
+            ph = max((h - 1) * sh + kh - h, 0) // 2
+            pw = max((w - 1) * sw + kw - w, 0) // 2
+        elif padding == 'valid':
+            ph, pw = 0, 0
+        else:
+            raise ValueError("Invalid padding type. Use 'same', 'valid', or a tuple (ph, pw).")
     else:
         ph, pw = padding
     
@@ -46,9 +49,7 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     
     for i in range(new_h):
         for j in range(new_w):
-            convolved[:, i, j] = np.sum(
-                padded_images[:, i * sh:i * sh + kh, j * sw:j * sw + kw] * kernel,
-                axis=(1, 2)
-            )
+            region = padded_images[:, i * sh:i * sh + kh, j * sw:j * sw + kw]
+            convolved[:, i, j] = np.tensordot(region, kernel, axes=((1, 2), (0, 1)))
     
     return convolved
