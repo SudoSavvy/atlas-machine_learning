@@ -4,6 +4,7 @@ Function to perform a valid convolution on grayscale images.
 """
 import numpy as np
 
+
 def convolve_grayscale_valid(images, kernel):
     """
     Performs a valid convolution on grayscale images.
@@ -25,11 +26,11 @@ def convolve_grayscale_valid(images, kernel):
     new_h = h - kh + 1
     new_w = w - kw + 1
     convolved = np.zeros((m, new_h, new_w))
-    
+
     for i in range(new_h):
         for j in range(new_w):
             convolved[:, i, j] = np.sum(
                 images[:, i:i+kh, j:j+kw] * kernel, axis=(1, 2)
             )
-    
+
     return convolved
