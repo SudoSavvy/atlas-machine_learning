@@ -7,19 +7,23 @@ import numpy as np
 
 def convolve_grayscale_same(images, kernel):
     """
-    Performs a same convolution on grayscale images with zero padding if necessary.
+    Performs a same convolution on grayscale images with
+    zero padding if necessary.
 
     Args:
-        images (numpy.ndarray): Shape (m, h, w), multiple grayscale images.
+        images (numpy.ndarray): Shape (m, h, w), multiple
+        grayscale images.
             - m: Number of images.
             - h: Height in pixels of the images.
             - w: Width in pixels of the images.
-        kernel (numpy.ndarray): Shape (kh, kw), the kernel for convolution.
+        kernel (numpy.ndarray): Shape (kh, kw), the kernel
+        for convolution.
             - kh: Height of the kernel.
             - kw: Width of the kernel.
 
     Returns:
-        numpy.ndarray: Convolved images with same spatial dimensions as the input.
+        numpy.ndarray: Convolved images with same spatial
+        dimensions as the input.
     """
     m, h, w = images.shape
     kh, kw = kernel.shape
