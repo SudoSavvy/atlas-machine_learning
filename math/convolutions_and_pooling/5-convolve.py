@@ -1,58 +1,89 @@
 #!/usr/bin/env python3
-"""
-Function to perform a convolution on images using multiple kernels.
-"""
+"""Convolve(images, kernels, padding='same', stride=(1, 1)): Module
+-- Multiple Kernels"""
 import numpy as np
 
+
 def convolve(images, kernels, padding='same', stride=(1, 1)):
+    """Function that performs a convolution on images using multiple
+    kernels:
+
+    images is a numpy.ndarray with shape (m, h, w, c) containing multiple
+    images
+    m is the number of images
+    h is the height in pixels of the images
+    w is the width in pixels of the images
+    c is the number of channels in the image
+    kernels is a numpy.ndarray with shape (kh, kw, c, nc) containing the
+    kernels for the convolution
+    kh is the height of a kernel
+    kw is the width of a kernel
+    nc is the number of kernels
+    padding is either a tuple of (ph, pw), 'same', or 'valid'
+    if 'same', performs a same convolution
+    if 'valid', performs a valid convolution
+    if a tuple:
+    ph is the padding for the height of the image
+    pw is the padding for the width of the image
+    the image should be padded with 0's
+    stride is a tuple of (sh, sw)
+    sh is the stride for the height of the image
+    sw is the stride for the width of the image
+    You are only allowed to use three for loops; any other loops of any kind
+    are not allowed
+    Returns: a numpy.ndarray containing the convolved images
+
     """
-    Performs a convolution on images using multiple kernels.
+    # unpack images, kernels, stride
+    (m, h, w, c), (kh, kw, kc, nc) = images.shape, kernels.shape
+    (sh, sw) = stride
 
-    Args:
-        images (numpy.ndarray): Shape (m, h, w, c), multiple images.
-            - m: Number of images.
-            - h: Height of the images.
-            - w: Width of the images.
-            - c: Number of channels.
-        kernels (numpy.ndarray): Shape (kh, kw, c, nc), the kernels for convolution.
-            - kh: Height of a kernel.
-            - kw: Width of a kernel.
-            - c: Number of channels.
-            - nc: Number of kernels.
-        padding (str or tuple): Either 'same', 'valid', or a tuple (ph, pw).
-            - 'same': Performs same convolution (zero-padding to keep size).
-            - 'valid': Performs valid convolution (no padding).
-            - (ph, pw): Custom padding for height and width.
-        stride (tuple): (sh, sw), the stride for height and width.
-            - sh: Stride for the height of the image.
-            - sw: Stride for the width of the image.
-
-    Returns:
-        numpy.ndarray: Convolved images.
-    """
-    m, h, w, c = images.shape
-    kh, kw, kc, nc = kernels.shape
-    sh, sw = stride
-
+    # statements to determine padding
     if padding == 'same':
-        ph = ((h - 1) * sh + kh - h) // 2
-        pw = ((w - 1) * sw + kw - w) // 2
+        # if same then calculate the padding size
+        pad_h = (((h - 1) * sh) + kh - h) // 2 + 1
+        pad_w = (((w - 1) * sw) + kw - w) // 2 + 1
     elif padding == 'valid':
-        ph, pw = 0, 0
+        # if valid then no padding for height and width
+        pad_h = 0
+        pad_w = 0
     else:
-        ph, pw = padding
+        # if padding is a tuple then use padding values
+        pad_h, pad_w = padding
 
-    padded_images = np.pad(images, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant')
-    new_h = (h + 2 * ph - kh) // sh + 1
-    new_w = (w + 2 * pw - kw) // sw + 1
-    convolved = np.zeros((m, new_h, new_w, nc))
+    # pad the images with zeros with the padding values
+    padded_images = np.pad(
+        images,
+        ((0, 0),
+         (pad_h, pad_h),
+         (pad_w, pad_w),
+         (0, 0)),
+    )
 
-    for i in range(new_h):
-        for j in range(new_w):
-            for k in range(nc):
-                convolved[:, i, j, k] = np.sum(
-                    padded_images[:, i * sh:i * sh + kh, j * sw:j * sw + kw, :] * kernels[:, :, :, k],
-                    axis=(1, 2, 3)
+    # calculate output height and width
+    output_h = (h + 2 * pad_h - kh) // sh + 1
+    output_w = (w + 2 * pad_w - kw) // sw + 1
+
+    # init the outcome
+    convolved_images = np.zeros((m, output_h, output_w, nc))
+
+    # apply convolution
+    for k in range(nc):
+        for y in range(output_h):
+            for x in range(output_w):
+                # retrieve the current stride region
+                current_stride = padded_images[
+                    :,
+                    y * sh:y * sh + kh,
+                    x * sw:x * sw + kw,
+                    :
+                ]
+
+                # apply tensordot function with kernels
+                convolved_images[:, y, x, k] = np.tensordot(
+                    current_stride, kernels[:, :, :, k],
+                    axes=((1, 2, 3), (0, 1, 2))
                 )
 
-    return convolved
+    # return a numpy.ndarray containing the convolved images
+    return (convolved_images)
