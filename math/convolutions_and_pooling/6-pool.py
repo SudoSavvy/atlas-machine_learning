@@ -4,6 +4,7 @@ Function to perform pooling on images.
 """
 import numpy as np
 
+
 def pool(images, kernel_shape, stride, mode='max'):
     """
     Performs pooling on images.
@@ -20,7 +21,8 @@ def pool(images, kernel_shape, stride, mode='max'):
         stride (tuple): (sh, sw), the stride for height and width.
             - sh: Stride for the height of the image.
             - sw: Stride for the width of the image.
-        mode (str): Type of pooling ('max' for max pooling, 'avg' for average pooling).
+        mode (str): Type of pooling ('max' for max pooling, 'avg'
+        for average pooling).
 
     Returns:
         numpy.ndarray: Pooled images.
@@ -28,7 +30,7 @@ def pool(images, kernel_shape, stride, mode='max'):
     m, h, w, c = images.shape
     kh, kw = kernel_shape
     sh, sw = stride
-    
+
     new_h = (h - kh) // sh + 1
     new_w = (w - kw) // sw + 1
     pooled = np.zeros((m, new_h, new_w, c))
