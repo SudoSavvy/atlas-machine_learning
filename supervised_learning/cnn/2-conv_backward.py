@@ -26,8 +26,8 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     m, h_new, w_new, _ = dZ.shape
 
     if padding == "same":
-        pad_h = ((h_new - 1) * sh + kh - h_prev) // 2
-        pad_w = ((w_new - 1) * sw + kw - w_prev) // 2
+        pad_h = ((h_prev - 1) * sh + kh - h_new) // 2
+        pad_w = ((w_prev - 1) * sw + kw - w_new) // 2
     else:
         pad_h, pad_w = 0, 0
 
@@ -43,11 +43,12 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
 
             for n in range(m):
                 a_slice = A_prev_padded[n, h_start:h_end, w_start:w_end, :]
-                dW += np.einsum('ijkl,im->jklm', a_slice, dZ[n, i, j, :])
-                dA_prev_padded[n, h_start:h_end, w_start:w_end, :] += np.einsum('jklm,im->ijkl', W, dZ[n, i, j, :])
+                for c in range(c_new):
+                    dW[:, :, :, c] += a_slice * dZ[n, i, j, c]
+                    dA_prev_padded[n, h_start:h_end, w_start:w_end, :] += W[:, :, :, c] * dZ[n, i, j, c]
 
     if padding == "same":
-        dA_prev = dA_prev_padded[:, pad_h:pad_h + h_prev, pad_w:pad_w + w_prev, :]
+        dA_prev = dA_prev_padded[:, pad_h:-pad_h, pad_w:-pad_w, :]
     else:
         dA_prev = dA_prev_padded
 
