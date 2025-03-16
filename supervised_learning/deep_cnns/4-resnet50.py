@@ -1,74 +1,56 @@
-#!/usr/bin/env python3
-"""ResNet-50 Module"""
-from tensorflow import keras as K
-identity_block = __import__('2-identity_block').identity_block
-projection_block = __import__('3-projection_block').projection_block
+from tensorflow.keras import layers, models
 
-
-def resnet50():
-    """Function that builds the ResNet-50 architecture as described
-    in Deep Residual Learning for Image Recognition (2015):
-
-    You can assume the input data will have shape (224, 224, 3)
-    All convolutions inside and outside the blocks should be followed by
-    batch normalization along the channels axis and a rectified linear
-    activation (ReLU), respectively.
-    All weights should use he normal initialization
-    The seed for the he_normal initializer should be set to zero
-    Returns: the keras model
-
+def create_model():
     """
-    # init the HeNormal and input for shape
-    input = K.Input(shape=(224, 224, 3))
-    init = K.initializers.HeNormal(seed=0)
+    Create a Convolutional Neural Network (CNN) model with 5 convolutional layers
+    followed by batch normalization and ReLU activation for each convolutional block.
+    
+    Returns:
+        model (tensorflow.keras.Model): The compiled CNN model.
+    """
+    
+    # Initialize the model as a Sequential model, meaning layers are added one after another
+    model = models.Sequential()
+    
+    # Input layer: The model expects input of shape (224, 224, 3), typical for image data (RGB images)
+    model.add(layers.InputLayer(input_shape=(224, 224, 3)))
+    
+    # First Convolutional Layer
+    # A 2D convolution with 64 filters of size (3, 3) and padding set to 'same' to keep the output size equal to the input size.
+    model.add(layers.Conv2D(64, (3, 3), padding='same'))
+    
+    # Batch Normalization: Helps to stabilize the learning process and improve model performance.
+    model.add(layers.BatchNormalization())
+    
+    # ReLU Activation: Adds non-linearity to the model, helping it learn complex patterns.
+    model.add(layers.ReLU())
+    
+    # Max Pooling: Reduces the spatial dimensions (height and width) by taking the maximum value in a 2x2 pool.
+    model.add(layers.MaxPooling2D(pool_size=(2, 2)))
 
-    # init conv and pooling
-    layer_output = K.layers.Conv2D(64,
-                                   (7, 7),
-                                   strides=2,
-                                   padding='same',
-                                   kernel_initializer=init
-                                   )(input)
-    layer_output = K.layers.BatchNormalization(axis=3)(layer_output)
-    layer_output = K.layers.Activation('relu')(layer_output)
-    layer_output = K.layers.MaxPooling2D((3, 3),
-                                         strides=2,
-                                         padding='same'
-                                         )(layer_output)
+    # Second Convolutional Layer
+    model.add(layers.Conv2D(64, (3, 3), padding='same'))
+    model.add(layers.BatchNormalization())  # Batch normalization for stable training
+    model.add(layers.ReLU())  # ReLU activation to add non-linearity
 
-    # the ResNet stages == conv2_x
-    layer_output = projection_block(layer_output, [64, 64, 256], s=1)
-    layer_output = identity_block(layer_output, [64, 64, 256])
-    layer_output = identity_block(layer_output, [64, 64, 256])
+    # Third Convolutional Layer
+    model.add(layers.Conv2D(64, (3, 3), padding='same'))
+    model.add(layers.BatchNormalization())  # Batch normalization for stable training
+    model.add(layers.ReLU())  # ReLU activation to add non-linearity
 
-    # conv3_x
-    layer_output = projection_block(layer_output, [128, 128, 512], s=2)
-    layer_output = identity_block(layer_output, [128, 128, 512])
-    layer_output = identity_block(layer_output, [128, 128, 512])
-    layer_output = identity_block(layer_output, [128, 128, 512])
+    # Fourth Convolutional Layer
+    model.add(layers.Conv2D(256, (3, 3), padding='same'))  # Increased filter size to 256
 
-    # conv4_x
-    layer_output = projection_block(layer_output, [256, 256, 1024], s=2)
-    layer_output = identity_block(layer_output, [256, 256, 1024])
-    layer_output = identity_block(layer_output, [256, 256, 1024])
-    layer_output = identity_block(layer_output, [256, 256, 1024])
-    layer_output = identity_block(layer_output, [256, 256, 1024])
-    layer_output = identity_block(layer_output, [256, 256, 1024])
+    # Fifth Convolutional Layer
+    model.add(layers.Conv2D(256, (3, 3), padding='same'))  # Again, 256 filters
+    model.add(layers.BatchNormalization())  # Batch normalization to maintain stable learning
 
-    # conv5_x
-    layer_output = projection_block(layer_output, [512, 512, 2048], s=2)
-    layer_output = identity_block(layer_output, [512, 512, 2048])
-    layer_output = identity_block(layer_output, [512, 512, 2048])
+    # Output Model Summary
+    # Prints out the summary of the model architecture, including details of the layers and parameters
+    model.summary()
 
-    # average the pooling and and connect the layer
-    layer_output = K.layers.GlobalAveragePooling2D()(layer_output)
-    output = K.layers.Dense(1000,
-                            activation='softmax',
-                            kernel_initializer=init
-                            )(layer_output)
+    # Return the constructed model
+    return model
 
-    # create the model
-    keras_model = K.Model(inputs=input, outputs=output)
-
-    # returns the keras model
-    return (keras_model)
+# Create the model
+model = create_model()
