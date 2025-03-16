@@ -1,56 +1,70 @@
-from tensorflow.keras import layers, models
+#!/usr/bin/env python3
+"""Builds the ResNet-50 architecture"""
 
-def create_model():
-    """
-    Create a Convolutional Neural Network (CNN) model with 5 convolutional layers
-    followed by batch normalization and ReLU activation for each convolutional block.
-    
-    Returns:
-        model (tensorflow.keras.Model): The compiled CNN model.
-    """
-    
-    # Initialize the model as a Sequential model, meaning layers are added one after another
-    model = models.Sequential()
-    
-    # Input layer: The model expects input of shape (224, 224, 3), typical for image data (RGB images)
-    model.add(layers.InputLayer(input_shape=(224, 224, 3)))
-    
-    # First Convolutional Layer
-    # A 2D convolution with 64 filters of size (3, 3) and padding set to 'same' to keep the output size equal to the input size.
-    model.add(layers.Conv2D(64, (3, 3), padding='same'))
-    
-    # Batch Normalization: Helps to stabilize the learning process and improve model performance.
-    model.add(layers.BatchNormalization())
-    
-    # ReLU Activation: Adds non-linearity to the model, helping it learn complex patterns.
-    model.add(layers.ReLU())
-    
-    # Max Pooling: Reduces the spatial dimensions (height and width) by taking the maximum value in a 2x2 pool.
-    model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+from tensorflow import keras as K
 
-    # Second Convolutional Layer
-    model.add(layers.Conv2D(64, (3, 3), padding='same'))
-    model.add(layers.BatchNormalization())  # Batch normalization for stable training
-    model.add(layers.ReLU())  # ReLU activation to add non-linearity
+identity_block = __import__('2-identity_block').identity_block
+projection_block = __import__('3-projection_block').projection_block
 
-    # Third Convolutional Layer
-    model.add(layers.Conv2D(64, (3, 3), padding='same'))
-    model.add(layers.BatchNormalization())  # Batch normalization for stable training
-    model.add(layers.ReLU())  # ReLU activation to add non-linearity
 
-    # Fourth Convolutional Layer
-    model.add(layers.Conv2D(256, (3, 3), padding='same'))  # Increased filter size to 256
+def resnet50():
+    """Builds the ResNet-50 architecture"""
 
-    # Fifth Convolutional Layer
-    model.add(layers.Conv2D(256, (3, 3), padding='same'))  # Again, 256 filters
-    model.add(layers.BatchNormalization())  # Batch normalization to maintain stable learning
+    model_start = K.layers.Input(shape=(224, 224, 3))
 
-    # Output Model Summary
-    # Prints out the summary of the model architecture, including details of the layers and parameters
-    model.summary()
+    # Start of stage 1
+    layers = K.layers.Conv2D(
+        kernel_size=7,
+        padding="same",
+        filters=64,
+        strides=2,
+        kernel_initializer=K.initializers.he_normal(),
+    )(model_start)
 
-    # Return the constructed model
+    layers = K.layers.BatchNormalization(axis=3)(layers)
+    layers = K.layers.Activation("relu")(layers)
+
+    layers = K.layers.MaxPooling2D(pool_size=3,
+                                   strides=2,
+                                   padding="same")(layers)
+
+    # Start of stage 2
+    layers = projection_block(layers, [64, 64, 256], 1)
+    layers = identity_block(layers, [64, 64, 256])
+    layers = identity_block(layers, [64, 64, 256])
+
+    # start of stage 3
+    layers = projection_block(layers, [128, 128, 512], 2)
+    layers = identity_block(layers, [128, 128, 512])
+    layers = identity_block(layers, [128, 128, 512])
+    layers = identity_block(layers, [128, 128, 512])
+
+    # start of stage 4
+    layers = projection_block(layers, [256, 256, 1024], 2)
+    layers = identity_block(layers, [256, 256, 1024])
+    layers = identity_block(layers, [256, 256, 1024])
+    layers = identity_block(layers, [256, 256, 1024])
+    layers = identity_block(layers, [256, 256, 1024])
+    layers = identity_block(layers, [256, 256, 1024])
+
+    # start of staage 5
+    layers = projection_block(layers, [512, 512, 2048], 2)
+    layers = identity_block(layers, [512, 512, 2048])
+    layers = identity_block(layers, [512, 512, 2048])
+
+    # last stage
+    # Need to find out why the parameters are this way
+    layers = K.layers.AveragePooling2D(pool_size=7,
+                                       strides=1,
+                                       padding="valid")(layers)
+
+    # layers = K.layers.Flatten()(layers)
+
+    layers = K.layers.Dense(
+        1000, activation="softmax",
+        kernel_initializer=K.initializers.he_normal()
+    )(layers)
+
+    model = K.models.Model(model_start, layers)
+
     return model
-
-# Create the model
-model = create_model()
