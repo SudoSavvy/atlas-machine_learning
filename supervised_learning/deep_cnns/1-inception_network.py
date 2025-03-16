@@ -51,8 +51,8 @@ def inception_block(A_prev, filters):
     )(maxpool)
 
     # Concatenate all branches
-    output = K.layers.Concatenate()(
-        [conv1x1, conv3x3, conv5x5, conv_maxpool]
-    )
+    output = K.layers.Concatenate()([
+        conv1x1, conv3x3, conv5x5, conv_maxpool
+    ])
 
     return output
