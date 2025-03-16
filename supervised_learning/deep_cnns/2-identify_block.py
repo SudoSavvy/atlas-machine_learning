@@ -58,4 +58,16 @@ def identity_block(A_prev, filters):
     x1 = K.layers.Activation('relu')(x1)
 
     # 3x3 convolution
-    x2 = K.layers.Conv2D(F3, (3, 3), padding='same', kernel_init
+    x2 = K.layers.Conv2D(F3, (3, 3), padding='same', kernel_initializer=init)(x1)
+    x2 = K.layers.BatchNormalization(axis=-1)(x2)
+    x2 = K.layers.Activation('relu')(x2)
+
+    # Second 1x1 convolution
+    x3 = K.layers.Conv2D(F12, (1, 1), padding='same', kernel_initializer=init)(x2)
+    x3 = K.layers.BatchNormalization(axis=-1)(x3)
+
+    # Add identity connection and apply final activation
+    add_output = K.layers.Add()([x3, A_prev])
+    id_output = K.layers.Activation('relu')(add_output)
+
+    return id_output
