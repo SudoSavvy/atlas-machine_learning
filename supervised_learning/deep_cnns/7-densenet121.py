@@ -1,79 +1,73 @@
 #!/usr/bin/env python3
+"""DenseNet, or Dense Convolutional Network,
+is a type of convolutional neural network
+architecture that connects each layer to
+every other layer in a feed-forward fashion.
+ This dense connectivity pattern leads to
+ several advantages.
 """
-DenseNet-121
-"""
+from tensorflow import keras as K
+dense_block = __import__('5-dense_block').dense_block
+transition_layer = __import__('6-transition_layer').transition_layer
 
-# Import Keras library as K
-import tensorflow.keras as K
 
 def densenet121(growth_rate=32, compression=1.0):
+    """Function that builds the DenseNet-121
+        architecture
+        growth_rate is the growth rate
+        compression is the compression factor
+        You can assume the input data will
+        have shape (224, 224, 3)
+        All convolutions should be preceded
+        by Batch Normalization and a
+        ReLU activation
+        All weights should use he normal
+        initialization
+        The seed for the he_normal intializer
+        should be set to zero
+
+        Returns: the keras model
     """
-    Function to build a DenseNet-121 architecture
-    """
-    # Initialize weights with He normal distribution
-    initializer = K.initializers.he_normal()
+    input_layer = K.Input(shape=(224, 224, 3))
+    init = K.initializers.he_normal(seed=0)
 
-    # Define the input layer shape
-    X = K.Input(shape=(224, 224, 3))
+    norm1 = K.layers.BatchNormalization(axis=3)(input_layer)
+    act1 = K.layers.Activation('relu')(norm1)
+    conv1 = K.layers.Conv2D(64, kernel_size=(7, 7), strides=(2, 2),
+                            padding='same',
+                            kernel_initializer=init)(act1)
+    pool1 = K.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2),
+                                  padding='same')(conv1)
 
-    # Normalize input
-    norm_1 = K.layers.BatchNormalization()
-    output_1 = norm_1(X)
+    dense_block1, nb_filters = dense_block(pool1, nb_filters=64,
+                                           growth_rate=growth_rate, layers=6)
 
-    # Apply ReLU activation to the normalized input
-    activ_1 = K.layers.Activation('relu')
-    output_1 = activ_1(output_1)
+    transition_layer1, nb_filters = transition_layer(dense_block1, nb_filters,
+                                                     compression=compression)
 
-    # Apply first convolutional operation with 64 filters and a 7x7 kernel
-    layer_1 = K.layers.Conv2D(filters=64,
-                              kernel_size=7,
-                              padding='same',
-                              strides=2,
-                              kernel_initializer=initializer,
-                              activation=None)
-    output_1 = layer_1(output_1)
+    dense_block2, nb_filters = dense_block(transition_layer1,
+                                           nb_filters=nb_filters,
+                                           growth_rate=growth_rate, layers=12)
 
-    # Apply max pooling operation with a 3x3 window
-    layer_2 = K.layers.MaxPool2D(pool_size=3,
-                                 padding='same',
-                                 strides=2)
-    output_2 = layer_2(output_1)
+    transition_layer2, nb_filters = transition_layer(dense_block2, nb_filters,
+                                                     compression=compression)
 
-    # Apply first dense block with 6 layers
-    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 6)
+    dense_block3, nb_filters = dense_block(transition_layer2,
+                                           nb_filters=nb_filters,
+                                           growth_rate=growth_rate, layers=24)
 
-    # Apply first transition layer with compression factor
-    output_2 = transition_layer(output_2, channels_2, compression)
+    transition_layer3, nb_filters = transition_layer(dense_block3, nb_filters,
+                                                     compression=compression)
 
-    # Apply second dense block with 12 layers
-    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 12)
+    dense_block4, nb_filters = dense_block(transition_layer3,
+                                           nb_filters=nb_filters,
+                                           growth_rate=growth_rate, layers=16)
 
-    # Apply second transition layer with compression factor
-    output_2 = transition_layer(output_2, channels_2, compression)
+    avg_pool = K.layers.AveragePooling2D(pool_size=(7, 7))(dense_block4)
 
-    # Apply third dense block with 24 layers
-    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 24)
+    output = K.layers.Dense(1000, activation='softmax',
+                            kernel_initializer=init)(avg_pool)
 
-    # Apply third transition layer with compression factor
-    output_2 = transition_layer(output_2, channels_2, compression)
-
-    # Apply fourth dense block with 16 layers
-    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 16)
-
-    # Apply average pooling with a 7x7 window
-    layer_3 = K.layers.AvgPool2D(pool_size=7,
-                                 padding='same',
-                                 strides=None)
-    output_3 = layer_3(output_2)
-
-    # Apply a dense layer with softmax activation for final classification
-    softmax = K.layers.Dense(units=1000,
-                             activation='softmax',
-                             kernel_initializer=initializer,
-                             kernel_regularizer=K.regularizers.l2())
-    output_4 = softmax(output_3)
-
-    # Define the model with input and output layers
-    model = K.models.Model(inputs=X, outputs=output_4)
+    model = K.Model(inputs=input_layer, outputs=output)
 
     return model
