@@ -6,11 +6,6 @@ DenseNet-121
 # Import Keras library as K
 import tensorflow.keras as K
 
-# Import the necessary functions
-dense_block = __import__('5-dense_block').dense_block
-transition_layer = __import__('6-transition_layer').transition_layer
-
-
 def densenet121(growth_rate=32, compression=1.0):
     """
     Function to build a DenseNet-121 architecture
@@ -44,35 +39,32 @@ def densenet121(growth_rate=32, compression=1.0):
                                  strides=2)
     output_2 = layer_2(output_1)
 
-    # Add the first dense block with 6 layers
-    db1_output = dense_block(output_2, output_2.shape[-1], growth_rate, 6)
+    # Apply first dense block with 6 layers
+    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 6)
 
-    # Add the first transition layer with compression
-    tl1_output = transition_layer(db1_output[0],
-                                  int(db1_output[1]), compression)
+    # Apply first transition layer with compression factor
+    output_2 = transition_layer(output_2, channels_2, compression)
 
-    # Add the second dense block with 12 layers
-    db2_output = dense_block(tl1_output[0], tl1_output[1], growth_rate, 12)
+    # Apply second dense block with 12 layers
+    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 12)
 
-    # Add the second transition layer with compression
-    tl2_output = transition_layer(db2_output[0],
-                                  int(db2_output[1]), compression)
+    # Apply second transition layer with compression factor
+    output_2 = transition_layer(output_2, channels_2, compression)
 
-    # Add the third dense block with 24 layers
-    db3_output = dense_block(tl2_output[0], tl2_output[1], growth_rate, 24)
+    # Apply third dense block with 24 layers
+    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 24)
 
-    # Add the third transition layer with compression
-    tl3_output = transition_layer(db3_output[0],
-                                  int(db3_output[1]), compression)
+    # Apply third transition layer with compression factor
+    output_2 = transition_layer(output_2, channels_2, compression)
 
-    # Add the fourth dense block with 16 layers
-    db4_output = dense_block(tl3_output[0], tl3_output[1], growth_rate, 16)
+    # Apply fourth dense block with 16 layers
+    output_2, channels_2 = dense_block(output_2, output_2.shape[-1], growth_rate, 16)
 
     # Apply average pooling with a 7x7 window
     layer_3 = K.layers.AvgPool2D(pool_size=7,
                                  padding='same',
                                  strides=None)
-    output_3 = layer_3(db4_output[0])
+    output_3 = layer_3(output_2)
 
     # Apply a dense layer with softmax activation for final classification
     softmax = K.layers.Dense(units=1000,
