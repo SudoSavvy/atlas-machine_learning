@@ -22,21 +22,37 @@ def inception_block(A_prev, filters):
     F1, F3R, F3, F5R, F5, FPP = filters
 
     # 1x1 Convolution branch
-    conv1x1 = K.layers.Conv2D(F1, (1, 1), activation="relu", padding="same")(A_prev)
+    conv1x1 = K.layers.Conv2D(
+        F1, (1, 1), activation="relu", padding="same"
+    )(A_prev)
 
     # 1x1 Convolution before 3x3 Convolution branch
-    conv3x3_reduce = K.layers.Conv2D(F3R, (1, 1), activation="relu", padding="same")(A_prev)
-    conv3x3 = K.layers.Conv2D(F3, (3, 3), activation="relu", padding="same")(conv3x3_reduce)
+    conv3x3_reduce = K.layers.Conv2D(
+        F3R, (1, 1), activation="relu", padding="same"
+    )(A_prev)
+    conv3x3 = K.layers.Conv2D(
+        F3, (3, 3), activation="relu", padding="same"
+    )(conv3x3_reduce)
 
     # 1x1 Convolution before 5x5 Convolution branch
-    conv5x5_reduce = K.layers.Conv2D(F5R, (1, 1), activation="relu", padding="same")(A_prev)
-    conv5x5 = K.layers.Conv2D(F5, (5, 5), activation="relu", padding="same")(conv5x5_reduce)
+    conv5x5_reduce = K.layers.Conv2D(
+        F5R, (1, 1), activation="relu", padding="same"
+    )(A_prev)
+    conv5x5 = K.layers.Conv2D(
+        F5, (5, 5), activation="relu", padding="same"
+    )(conv5x5_reduce)
 
     # Max pooling branch followed by 1x1 Convolution
-    maxpool = K.layers.MaxPooling2D((3, 3), strides=(1, 1), padding="same")(A_prev)
-    conv_maxpool = K.layers.Conv2D(FPP, (1, 1), activation="relu", padding="same")(maxpool)
+    maxpool = K.layers.MaxPooling2D(
+        (3, 3), strides=(1, 1), padding="same"
+    )(A_prev)
+    conv_maxpool = K.layers.Conv2D(
+        FPP, (1, 1), activation="relu", padding="same"
+    )(maxpool)
 
     # Concatenate all branches
-    output = K.layers.Concatenate()([conv1x1, conv3x3, conv5x5, conv_maxpool])
+    output = K.layers.Concatenate()(
+        [conv1x1, conv3x3, conv5x5, conv_maxpool]
+    )
 
     return output
