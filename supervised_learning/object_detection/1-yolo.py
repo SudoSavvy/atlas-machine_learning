@@ -57,8 +57,8 @@ class Yolo:
 
         image_height, image_width = image_size
 
-        input_height = self.model.input.shape[1].value
-        input_width = self.model.input.shape[2].value
+        input_height = self.model.input.shape[1]
+        input_width = self.model.input.shape[2]
 
         for i, output in enumerate(outputs):
             grid_height, grid_width, anchor_boxes, _ = output.shape
