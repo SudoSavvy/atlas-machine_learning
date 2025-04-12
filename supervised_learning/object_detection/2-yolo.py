@@ -26,6 +26,9 @@ class Yolo:
         self.nms_t = nms_t
         self.anchors = anchors
 
+        # Ensure the model is compiled (if needed)
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy')
+
     def _load_classes(self, classes_path):
         """
         Load class names from a file.
