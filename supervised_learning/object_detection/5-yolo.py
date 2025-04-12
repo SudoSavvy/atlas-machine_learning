@@ -2,22 +2,25 @@
 """
 Yolo class implementation.
 
-This module contains the Yolo class which includes methods for preprocessing images
-before feeding them into a Darknet-based YOLO model.
+This module contains the Yolo class for Darknet-based YOLO models. It includes methods
+to load and preprocess images before feeding them into the model.
 
 The preprocessed images are resized to the specified input dimensions of the Darknet model
-using inter-cubic interpolation. The pixel values are scaled to be in the range [0, 1].
+using inter-cubic interpolation, and their pixel values are scaled to the range [0, 1].
 
 Usage:
     yolo = Yolo(model_path, classes_path, class_threshold, nms_threshold, anchors)
+    images, image_paths = yolo.load_images('./yolo')
     pimages, image_shapes = yolo.preprocess_images(images)
 
 Where:
     - images is a list of images as numpy.ndarrays.
+    - image_paths is a list of file paths corresponding to the images.
     - pimages is a numpy.ndarray of shape (ni, input_h, input_w, 3), where ni is the number of images.
     - image_shapes is a numpy.ndarray of shape (ni, 2) containing the original (height, width) of each image.
 """
 
+import os
 import cv2
 import numpy as np
 
@@ -27,9 +30,9 @@ class Yolo:
     Yolo class for Darknet-based YOLO models.
     
     Attributes:
-        model_path (str): Path to the Darknet model file (e.g. test.h5).
-        classes_path (str): Path to the classes file (e.g. test.txt).
-        class_threshold (float): Threshold for class score.
+        model_path (str): Path to the Darknet model file.
+        classes_path (str): Path to the file containing class names.
+        class_threshold (float): Threshold for class detection scores.
         nms_threshold (float): Threshold for non-max suppression.
         anchors (list): List of anchor boxes.
         input_h (int): The height dimension expected by the Darknet model.
@@ -40,7 +43,7 @@ class Yolo:
         """
         Initialize a Yolo instance with the provided parameters.
         
-        The input dimensions (input_h and input_w) are set to default values (416).
+        Default input dimensions (input_h and input_w) are set to 416.
         These can be modified if a different Darknet model input size is required.
         
         Args:
@@ -56,9 +59,42 @@ class Yolo:
         self.nms_threshold = nms_threshold
         self.anchors = anchors
 
-        # Set default input dimensions for the model; these may vary by model.
+        # Set default input dimensions for the model (can be modified)
         self.input_h = 416
         self.input_w = 416
+
+    def load_images(self, folder_path):
+        """
+        Loads images from the specified folder.
+        
+        This method iterates through the given folder and loads each image file
+        whose extension indicates a common image format. It returns a tuple:
+            - images: List of images loaded as numpy.ndarrays.
+            - image_paths: List of corresponding image file paths.
+        
+        Args:
+            folder_path (str): Path to the folder containing image files.
+            
+        Returns:
+            tuple: (images, image_paths)
+                - images (list of numpy.ndarray): The loaded images.
+                - image_paths (list of str): The file paths for the loaded images.
+        """
+        images = []
+        image_paths = []
+        # Define supported image extensions
+        valid_ext = {'.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff'}
+
+        # List files in the folder in sorted order for consistent behavior
+        for file in sorted(os.listdir(folder_path)):
+            ext = os.path.splitext(file)[1].lower()
+            if ext in valid_ext:
+                full_path = os.path.join(folder_path, file)
+                img = cv2.imread(full_path)
+                if img is not None:
+                    images.append(img)
+                    image_paths.append(full_path)
+        return images, image_paths
 
     def preprocess_images(self, images):
         """
@@ -107,14 +143,13 @@ if __name__ == "__main__":
     # This matches the expected parameters: model_path, classes_path, class_threshold, nms_threshold, anchors.
     yolo_instance = Yolo('test.h5', 'test.txt', 0.6, 0.5, anchors)
 
-    # Create dummy images for testing using numpy (each image is 480x640 with 3 color channels)
-    dummy_image1 = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
-    dummy_image2 = np.random.randint(0, 256, (600, 800, 3), dtype=np.uint8)
-    images = [dummy_image1, dummy_image2]
+    # Load images from the './yolo' directory.
+    # This directory should contain image files with a supported extension.
+    images, image_paths = yolo_instance.load_images('./yolo')
 
-    # Preprocess the images and obtain processed images and their original sizes
+    # Preprocess the loaded images.
     pimages, image_shapes = yolo_instance.preprocess_images(images)
 
-    # Output check: Display the shapes of the processed images and the original image sizes
+    # Output check: Display the shapes of the processed images and the original image sizes.
     print("imagess correctly processed:", pimages.shape)
     print("image_sizes correctly calculated:", image_shapes.shape)
