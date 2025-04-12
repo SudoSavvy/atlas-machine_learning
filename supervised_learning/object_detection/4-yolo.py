@@ -9,6 +9,12 @@ import os
 
 class Yolo:
     """YOLO class for object detection"""
+    def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
+        self.model_path = model_path
+        self.classes_path = classes_path
+        self.class_t = class_t
+        self.nms_t = nms_t
+        self.anchors = anchors
 
     @staticmethod
     def load_images(folder_path):
