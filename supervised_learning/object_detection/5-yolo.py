@@ -60,3 +60,25 @@ class Yolo:
         pimages = np.array(pimages)
         # ✨ FIX: Leave image_shapes as a regular Python list (NOT np.array)
         return pimages, image_shapes
+    def load_images(self, folder_path):
+        """Loads and preprocesses all images in the given folder."""
+        import os
+        from PIL import Image
+        import numpy as np
+
+        images = []
+        image_paths = []
+
+        for filename in os.listdir(folder_path):
+            if filename.endswith('.jpg') or filename.endswith('.png'):
+                path = os.path.join(folder_path, filename)
+                try:
+                    img = Image.open(path).convert('RGB')
+                    img = img.resize((self.model.input_shape[1], self.model.input_shape[2]))
+                    img_array = np.array(img) / 255.0  # Normalize to [0, 1]
+                    images.append(img_array)
+                    image_paths.append(path)
+                except Exception as e:
+                    print(f"Error loading image {path}: {e}")
+
+        return np.array(images), image_paths
