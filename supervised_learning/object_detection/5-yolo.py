@@ -1,52 +1,26 @@
 #!/usr/bin/env python3
-"""
-YOLO class
-"""
 
+"""0-main.py"""
 import numpy as np
-import cv2
-import os
+import tensorflow as tf
+import sys
 
+# Import yolo
+sys.path.append('./')
+yolo = __import__('yolo').Yolo
 
-class Yolo:
-    def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
-        self.model_path = model_path
-        self.classes_path = classes_path
-        self.class_t = class_t
-        self.nms_t = nms_t
-        self.anchors = anchors
+if __name__ == '__main__':
+    model_path = 'test.h5'
+    classes_path = 'test.txt'
+    class_t = 0.5
+    nms_t = 0.5
+    anchors = np.array([[[10, 13], [16, 30], [33, 23]],
+                        [[30, 61], [62, 45], [59, 119]],
+                        [[116, 90], [156, 198], [373, 326]]])
 
-        # Load model
-        self.model = self.load_model(model_path)
-        
-        # Load classes
-        self.class_names = self.load_classes(classes_path)
+    yolo = yolo(model_path, classes_path, anchors, class_t, nms_t)
 
-    def load_model(self, model_path):
-        # Load Keras model
-        from tensorflow.keras.models import load_model
-        return load_model(model_path)
-
-    def load_classes(self, classes_path):
-        with open(classes_path, 'r') as f:
-            classes = [line.strip() for line in f.readlines()]
-        return classes
-
-    def load_images(self, folder_path):
-        """Load images from a folder"""
-        image_paths = []
-        images = []
-
-        # Walk through folder and collect image paths
-        for filename in os.listdir(folder_path):
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
-                path = os.path.join(folder_path, filename)
-                image_paths.append(path)
-
-        # Read and normalize images
-        for path in image_paths:
-            img = cv2.imread(path)
-            img = img.astype('float32') / 255.0  # Normalize pixel values
-            images.append(img)
-
-        return images, image_paths
+    images = np.random.randint(0, 256, (3, 512, 512, 3), dtype=np.uint8)
+    pimages, image_shapes = yolo.preprocess_images(images)
+    print(pimages)
+    print(image_shapes)
