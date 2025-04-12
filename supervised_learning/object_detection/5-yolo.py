@@ -39,7 +39,7 @@ class Yolo:
         Returns:
             tuple: (pimages, image_shapes)
                 pimages (numpy.ndarray): preprocessed images
-                image_shapes (numpy.ndarray): original image shapes
+                image_shapes (list of tuples): original image shapes
         """
         pimages = []
         image_shapes = []
@@ -58,6 +58,5 @@ class Yolo:
             pimages.append(scaled_img)
 
         pimages = np.array(pimages)
-        image_shapes = np.array(image_shapes)
-
+        # ✨ FIX: Leave image_shapes as a regular Python list (NOT np.array)
         return pimages, image_shapes
