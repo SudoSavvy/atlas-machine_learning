@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-This module defines a function to compute the adjugate matrix of a square matrix.
+This module defines a function to compute the adjugate
+ matrix of a square matrix.
 """
 
 
