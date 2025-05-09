@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-This module defines a function to compute the cofactor matrix of a square matrix.
+This module defines a function to compute the cofactor matrix of a
+square matrix.
 """
 
 
