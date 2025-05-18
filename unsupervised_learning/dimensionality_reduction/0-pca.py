@@ -18,24 +18,24 @@ def pca(X, var=0.95):
     - W: numpy.ndarray of shape (d, nd), weights matrix
     """
 
-    # Compute covariance matrix
+    # Covariance matrix
     covariance_matrix = np.dot(X.T, X) / (X.shape[0] - 1)
 
-    # Compute eigenvalues and eigenvectors
+    # Eigen decomposition
     eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
 
-    # Sort eigenvalues and eigenvectors in descending order
+    # Sort eigenvalues and eigenvectors descending
     idx = np.argsort(eigenvalues)[::-1]
     eigenvalues = eigenvalues[idx]
     eigenvectors = eigenvectors[:, idx]
 
-    # Compute cumulative variance ratio
+    # Cumulative variance ratio
     cum_var_ratio = np.cumsum(eigenvalues) / np.sum(eigenvalues)
 
-    # Find number of components to maintain desired variance
+    # Number of components to keep at least 'var' variance
     nd = np.argmax(cum_var_ratio >= var) + 1
 
-    # Select the top nd eigenvectors
+    # Select top components
     W = eigenvectors[:, :nd]
 
     return W
