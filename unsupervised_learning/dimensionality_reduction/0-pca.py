@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import numpy as np
-import numpy as np
 
 def pca(X, var=0.95):
     """Performs PCA on a dataset and returns the weights matrix maintaining specified variance."""
