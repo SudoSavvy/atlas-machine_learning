@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 import numpy as np
+pca = __import__('1-pca').pca
 
-def pca(X, var=1.0):
-    """Performs PCA on a dataset X to maintain the specified variance `var`"""
-    # Center the data
-    X_centered = X - np.mean(X, axis=0)
+# Load dataset
+data = np.load('data.npz')
+X = data['X']
 
-    # Compute the covariance matrix
-    cov_matrix = np.matmul(X_centered.T, X_centered) / (X.shape[0] - 1)
+# Perform PCA to keep 99% variance
+W = pca(X, var=0.99)
 
-    # Compute eigenvalues and eigenvectors
-    eigvals, eigvecs = np.linalg.eigh(cov_matrix)
+# Project the data
+X_transformed = np.matmul(X - np.mean(X, axis=0), W)
 
-    # Sort eigenvalues and eigenvectors in descending order
-    idx = np.argsort(eigvals)[::-1]
-    eigvals = eigvals[idx]
-    eigvecs = eigvecs[:, idx]
+# Print transformed data and shape
+print(X_transformed)
+print(X_transformed.shape)
 
-    # Compute cumulative variance ratio
-    cumulative_variance = np.cumsum(eigvals) / np.sum(eigvals)
-
-    # Determine the number of components to reach desired variance
-    k = np.searchsorted(cumulative_variance, var) + 1
-
-    # Select top-k eigenvectors
-    return eigvecs[:, :k]
+# For comparison: project with only first component
+W1 = pca(X, var=0.5)
+X1 = np.matmul(X - np.mean(X, axis=0), W1)
+print(X1)
+print(X1.shape)
