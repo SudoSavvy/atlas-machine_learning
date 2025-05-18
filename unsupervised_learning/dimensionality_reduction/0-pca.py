@@ -24,4 +24,4 @@ def pca(X, var=1.0):
     k = np.searchsorted(cumulative_variance, var) + 1
 
     # Return principal components
-    return eigvecs[:,]()
+    return eigvecs[:, :k]
