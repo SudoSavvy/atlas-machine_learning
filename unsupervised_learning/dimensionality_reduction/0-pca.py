@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 
-def pca(X, var=0.95):
+def pca(X, var=1.0):
     """Performs PCA on a dataset X to maintain the specified variance `var`"""
     # Compute the covariance matrix
     cov = np.matmul(X.T, X) / (X.shape[0] - 1)
