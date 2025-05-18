@@ -9,7 +9,8 @@ def mean_cov(X):
     Calculates the mean and covariance of a data set.
 
     Parameters:
-    - X (numpy.ndarray): shape (n, d), dataset with n data points and d dimensions.
+    - X (numpy.ndarray): shape (n, d), dataset with n data points
+    and d dimensions.
 
     Returns:
     - mean (numpy.ndarray): shape (1, d), the mean of the data set
