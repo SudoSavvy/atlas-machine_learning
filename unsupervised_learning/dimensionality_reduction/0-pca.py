@@ -1,41 +1,27 @@
 #!/usr/bin/env python3
-"""
-Performs PCA on dataset X to maintain a given fraction of variance.
-"""
-
 import numpy as np
 
-
 def pca(X, var=0.95):
-    """
-    Performs PCA on dataset X.
+    """Performs PCA on a dataset X to maintain the specified variance `var`"""
+    # Compute the covariance matrix
+    cov = np.matmul(X.T, X) / (X.shape[0] - 1)
 
-    Parameters:
-    - X: numpy.ndarray of shape (n, d), zero-mean data
-    - var: float, fraction of variance to maintain
+    # Compute eigenvalues and eigenvectors
+    eigvals, eigvecs = np.linalg.eigh(cov)
 
-    Returns:
-    - W: numpy.ndarray of shape (d, nd), weights matrix
-    """
+    # Sort eigenvalues and eigenvectors in descending order
+    sorted_indices = np.argsort(eigvals)[::-1]
+    eigvals_sorted = eigvals[sorted_indices]
+    eigvecs_sorted = eigvecs[:, sorted_indices]
 
-    # Covariance matrix
-    covariance_matrix = np.dot(X.T, X) / (X.shape[0] - 1)
+    # Compute the cumulative variance
+    total_variance = np.sum(eigvals_sorted)
+    cumulative_variance = np.cumsum(eigvals_sorted) / total_variance
 
-    # Eigen decomposition
-    eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
+    # Determine the number of components needed to reach desired variance
+    num_components = np.searchsorted(cumulative_variance, var) + 1
 
-    # Sort eigenvalues and eigenvectors descending
-    idx = np.argsort(eigenvalues)[::-1]
-    eigenvalues = eigenvalues[idx]
-    eigenvectors = eigenvectors[:, idx]
-
-    # Cumulative variance ratio
-    cum_var_ratio = np.cumsum(eigenvalues) / np.sum(eigenvalues)
-
-    # Number of components to keep at least 'var' variance
-    nd = np.argmax(cum_var_ratio >= var) + 1
-
-    # Select top components
-    W = eigenvectors[:, :nd]
+    # Select the corresponding eigenvectors (principal components)
+    W = eigvecs_sorted[:, :num_components]
 
     return W
