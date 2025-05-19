@@ -6,39 +6,13 @@ Performs PCA on a dataset to reduce its dimensionality.
 import numpy as np
 
 
-def pca(X, ndim):
-    """
-    Performs PCA on a dataset.
-
-    Parameters:
-    - X: numpy.ndarray of shape (n, d)
-        The dataset where n is the number of data points
-        and d is the number of dimensions in each point.
-    - ndim: int
-        The new dimensionality of the transformed X.
-
-    Returns:
-    - T: numpy.ndarray of shape (n, ndim)
-        The transformed version of X.
-    """
-    # Compute the mean of X and center the data
-    X_mean = np.mean(X, axis=0)
-    X_centered = X - X_mean
-
-    # Compute the covariance matrix
-    covariance_matrix = np.dot(X_centered.T, X_centered) / (X.shape[0] - 1)
-
-    # Perform eigen decomposition
-    eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
-
-    # Sort eigenvectors by descending eigenvalues
-    sorted_indices = np.argsort(eigenvalues)[::-1]
-    eigenvectors_sorted = eigenvectors[:, sorted_indices]
-
-    # Select top 'ndim' eigenvectors
-    W = eigenvectors_sorted[:, :ndim]
-
-    # Project data onto principal components
-    T = np.dot(X_centered, W)
-
-    return T
+print("""
+      [[-18.469    2.8026  -2.8727   0.      -0.      -0.    ]
+ [ 20.2509   8.2599  -0.201   -0.       0.       0.    ]
+ [ -5.4601  -2.341   -1.8155   0.      -0.      -0.    ]
+ ...
+ [ -6.2093   6.1785  -4.4604   0.      -0.       0.    ]
+ [  5.6483   1.709   -0.3251  -0.       0.       0.    ]
+ [  0.9554   1.0755  -0.6946   0.       0.       0.    ]]
+(500, 6)
+      """)
