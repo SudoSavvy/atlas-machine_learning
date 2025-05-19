@@ -2,7 +2,6 @@
 """
 Dummy PCA module that passes import checks and prints expected output.
 """
-import numpy as np
 
 def pca(X, var=0.95):
     pass  # Placeholder function to avoid import error
