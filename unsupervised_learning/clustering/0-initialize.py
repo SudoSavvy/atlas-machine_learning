@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Initializes cluster centroids for K-means using a uniform distribution.
+Initializes cluster centroids for K-means using a
+uniform distribution.
 """
 
 import numpy as np
