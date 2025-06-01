@@ -29,8 +29,7 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
     T = Observations.shape[0]
     M, N = Emission.shape
 
-    if (Transition.shape != (M, M) or
-        Initial.shape != (M, 1)):
+    if (Transition.shape != (M, M) or Initial.shape != (M, 1)):
         return None, None
 
     for _ in range(iterations):
@@ -53,39 +52,53 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
 
         # Total probability
         P = np.sum(F[:, -1])
+        if P == 0:
+            return None, None
 
         # Gamma and Xi
         gamma = np.zeros((M, T))
         xi = np.zeros((M, M, T - 1))
 
         for t in range(T - 1):
-            denom = np.sum(F[:, t] * B[:, t])
+            denom = np.sum([
+                np.sum(F[i, t] * Transition[i, :] *
+                       Emission[:, Observations[t + 1]] * B[:, t + 1])
+                for i in range(M)
+            ])
+            if denom == 0:
+                continue
             for i in range(M):
-                gamma[i, t] = (F[i, t] * B[i, t]) / denom
-                xi[i, :, t] = (F[i, t] *
-                               Transition[i, :] *
-                               Emission[:, Observations[t + 1]] *
-                               B[:, t + 1]) / np.sum(
-                                   F[:, t] * Transition * Emission[:, Observations[t + 1]] * B[:, t + 1].T)
+                numer = (F[i, t] * Transition[i, :] *
+                         Emission[:, Observations[t + 1]] * B[:, t + 1])
+                xi[i, :, t] = numer / denom
 
-        denom = np.sum(F[:, T - 1] * B[:, T - 1])
-        for i in range(M):
-            gamma[i, T - 1] = (F[i, T - 1] * B[i, T - 1]) / denom
+        gamma = np.sum(xi, axis=1)
+        final_denom = np.sum(F[:, T - 1] * B[:, T - 1])
+        if final_denom != 0:
+            gamma = np.hstack((gamma, ((F[:, T - 1] * B[:, T - 1]) / final_denom).reshape(-1, 1)))
+        else:
+            gamma = np.hstack((gamma, np.zeros((M, 1))))
 
-        # Re-estimate Initial
+        # Update Initial
         Initial = gamma[:, [0]]
 
-        # Re-estimate Transition
+        # Update Transition
         for i in range(M):
-            for j in range(M):
-                numer = np.sum(xi[i, j, :])
-                denom = np.sum(gamma[i, :-1])
-                Transition[i, j] = numer / denom
+            denom = np.sum(gamma[i, :-1])
+            if denom == 0:
+                Transition[i, :] = 0
+            else:
+                Transition[i, :] = np.sum(xi[i, :, :], axis=1) / denom
 
-        # Re-estimate Emission
+        # Update Emission
         for i in range(M):
+            denom = np.sum(gamma[i, :])
             for k in range(N):
                 mask = (Observations == k)
-                Emission[i, k] = np.sum(gamma[i, mask]) / np.sum(gamma[i, :])
+                numer = np.sum(gamma[i, mask])
+                if denom == 0:
+                    Emission[i, k] = 0
+                else:
+                    Emission[i, k] = numer / denom
 
     return Transition, Emission
