@@ -1,50 +1,55 @@
 #!/usr/bin/env python3
-"""Bayesian Optimization module for a noiseless 1D Gaussian Process"""
+"""creates the class for a
+Bayesian Optimization"""
 
 import numpy as np
-GP = __import__('2-gp').GaussianProcess
+from scipy.stats import norm
+GP = __import__("2-gp").GaussianProcess
 
 
 class BayesianOptimization:
-    """Performs Bayesian optimization on a noiseless 1D Gaussian process"""
+    """Beysianbby"""
 
-    def __init__(self, f, X_init, Y_init, bounds,
-                 ac_samples, l=1, sigma_f=1, xsi=0.01, minimize=True):
-        """Class constructor"""
+    def __init__(
+        self,
+        f,
+        X_init,
+        Y_init,
+        bounds,
+        ac_samples,
+        l=1,
+        sigma_f=1,
+        xsi=0.01,
+        minimize=True,
+    ):
+
         self.f = f
         self.gp = GP(X_init, Y_init, l=l, sigma_f=sigma_f)
+        self.l = l
         self.X_s = np.linspace(bounds[0], bounds[1], ac_samples).reshape(-1, 1)
         self.xsi = xsi
         self.minimize = minimize
 
     def acquisition(self):
-        """Calculates the next best sample location using Expected Improvement"""
-        mu, sigma = self.gp.predict(self.X_s)
-        sigma = np.sqrt(sigma)
+        """Documentation"""
+        mu_s, sigma_s = self.gp.predict(self.X_s)
+
+        sigma_s = np.maximum(sigma_s, 1e-9)
 
         if self.minimize:
-            opt_value = np.min(self.gp.Y)
-            improvement = opt_value - mu - self.xsi
+            f_best = np.min(self.gp.Y)
+            imp = (f_best - mu_s) - self.xsi
         else:
-            opt_value = np.max(self.gp.Y)
-            improvement = mu - opt_value - self.xsi
+            f_best = np.max(self.gp.Y)
+            imp = (mu_s - y) - self.xsi
 
-        with np.errstate(divide='warn'):
-            Z = np.zeros_like(mu)
-            mask = sigma > 0
-            Z[mask] = improvement[mask] / sigma[mask]
+        with np.errstate(divide="warn"):
+            Z = imp / sigma_s
+            ei = imp * norm.cdf(Z) + sigma_s * norm.pdf(Z)
 
-        # Standard normal PDF
-        pdf = (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * Z**2)
+        ei[sigma_s == 0.0] = 0.0
 
-        # Standard normal CDF using np.erf
-        cdf = 0.5 * (1 + np.erf(Z / np.sqrt(2)))
+        max_ei_idx = np.argmax(ei)
+        X_next = self.X_s[max_ei_idx]
 
-        # EI formula
-        EI = improvement * cdf + sigma * pdf
-        EI[sigma == 0.0] = 0.0
-
-        # Find next best point
-        X_next = self.X_s[np.argmax(EI)].reshape(1)
-
-        return X_next, EI
+        return X_next, ei
