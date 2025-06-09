@@ -1,73 +1,81 @@
 #!/usr/bin/env python3
-"""Bayesian Optimization"""
+"""creates the class for a
+Bayesian Optimization"""
 
 import numpy as np
-GP = __import__('2-gp').GaussianProcess
+from scipy.stats import norm
+GP = __import__("2-gp").GaussianProcess
 
 
 class BayesianOptimization:
-    """Performs Bayesian optimization on a noiseless 1D Gaussian process"""
+    """Beysianbby"""
 
-    def __init__(self, f, X_init, Y_init, bounds, ac_samples,
-                 l=1, sigma_f=1, xsi=0.01, minimize=True):
-        """
-        Class constructor
-        """
+    def __init__(
+        self,
+        f,
+        X_init,
+        Y_init,
+        bounds,
+        ac_samples,
+        l=1,
+        sigma_f=1,
+        xsi=0.01,
+        minimize=True,
+    ):
+
         self.f = f
         self.gp = GP(X_init, Y_init, l=l, sigma_f=sigma_f)
+        self.l = l
         self.X_s = np.linspace(bounds[0], bounds[1], ac_samples).reshape(-1, 1)
         self.xsi = xsi
         self.minimize = minimize
-        self.bounds = bounds
 
     def acquisition(self):
-        """
-        Computes the next best sample location using Expected Improvement
-        """
-        mu, sigma = self.gp.predict(self.X_s)
-        sigma = sigma.reshape(-1, 1)
+        """Documentation"""
+        mu_s, sigma_s = self.gp.predict(self.X_s)
+
+        sigma_s = np.maximum(sigma_s, 1e-9)
 
         if self.minimize:
-            best = np.min(self.gp.Y)
-            imp = best - mu.reshape(-1, 1) - self.xsi
+            f_best = np.min(self.gp.Y)
+            imp = (f_best - mu_s) - self.xsi
         else:
-            best = np.max(self.gp.Y)
-            imp = mu.reshape(-1, 1) - best - self.xsi
+            f_best = np.max(self.gp.Y)
+            imp = (mu_s - y) - self.xsi
 
-        Z = np.zeros_like(imp)
-        std_nonzero = sigma != 0
-        Z[std_nonzero] = imp[std_nonzero] / sigma[std_nonzero]
+        with np.errstate(divide="warn"):
+            Z = imp / sigma_s
+            ei = imp * norm.cdf(Z) + sigma_s * norm.pdf(Z)
 
-        # Use numerical approximation of normal PDF and CDF
-        cdf = 0.5 * (1 + np.erf(Z / np.sqrt(2)))
-        pdf = (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * Z**2)
+        ei[sigma_s == 0.0] = 0.0
 
-        EI = imp * cdf + sigma * pdf
-        EI[sigma == 0.0] = 0.0
+        max_ei_idx = np.argmax(ei)
+        X_next = self.X_s[max_ei_idx]
 
-        X_next = self.X_s[np.argmax(EI)]
-
-        return X_next.reshape(1,), EI.flatten()
+        return X_next, ei
 
     def optimize(self, iterations=100):
-        """
-        Optimizes the black-box function
-        """
-        for _ in range(iterations):
+        """Optomatron"""
+
+        for i in range(iterations):
             X_next, _ = self.acquisition()
 
             if np.any(np.isclose(X_next, self.gp.X)):
-                break  # Stop if X_next was already sampled
+                break
 
             Y_next = self.f(X_next)
-            self.gp.update(X_next, Y_next)
+
+            self.gp.X = np.vstack([self.gp.X, X_next.reshape(-1, 1)])
+            self.gp.Y = np.vstack([self.gp.Y, Y_next.reshape(-1, 1)])
+
+            self.gp.K = self.gp.kernel(self.gp.X, self.gp.X)
 
         if self.minimize:
-            idx = np.argmin(self.gp.Y)
+            idx_opt = np.argmin(self.gp.Y)
         else:
-            idx = np.argmax(self.gp.Y)
+            idx_opt = np.argmax(self.gp.Y)
 
-        X_opt = self.gp.X[idx]
-        Y_opt = self.gp.Y[idx]
+        X_opt = self.gp.X[idx_opt]
+        Y_opt = self.gp.Y[idx_opt]
 
         return X_opt, Y_opt
