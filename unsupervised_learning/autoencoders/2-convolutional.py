@@ -9,46 +9,38 @@ def autoencoder(input_dims, filters, latent_dims):
 
     Args:
         input_dims (tuple): Dimensions of the model input (H, W, C).
-        filters (list): List of integers containing the number of filters
-                        for each convolutional layer in the encoder.
+        filters (list): List of integers for each Conv2D layer in encoder.
         latent_dims (tuple): Dimensions of the latent space representation.
 
     Returns:
-        encoder (keras.Model): The encoder model.
-        decoder (keras.Model): The decoder model.
-        auto (keras.Model): The full autoencoder model, compiled.
+        encoder (keras.Model): Encoder model.
+        decoder (keras.Model): Decoder model.
+        auto (keras.Model): Autoencoder model, compiled.
     """
     # Encoder
     input_layer = keras.Input(shape=input_dims)
     x = input_layer
     for f in filters:
-        x = keras.layers.Conv2D(
-            filters=f, kernel_size=(3, 3), padding='same',
-            activation='relu')(x)
-        x = keras.layers.MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-
+        x = keras.layers.Conv2D(f, (3, 3), activation='relu',
+                                padding='same')(x)
+        x = keras.layers.MaxPooling2D((2, 2), padding='same')(x)
     encoder = keras.Model(inputs=input_layer, outputs=x)
 
     # Decoder
-    decoder_input = keras.Input(shape=latent_dims)
-    x = decoder_input
-    for i, f in enumerate(reversed(filters)):
-        # Last two layers handled separately below
-        if i < len(filters) - 2:
-            x = keras.layers.Conv2D(
-                filters=f, kernel_size=(3, 3), padding='same',
-                activation='relu')(x)
-            x = keras.layers.UpSampling2D(size=(2, 2))(x)
-        elif i == len(filters) - 2:
-            x = keras.layers.Conv2D(
-                filters=f, kernel_size=(3, 3), padding='valid',
-                activation='relu')(x)
-        else:
-            x = keras.layers.Conv2D(
-                filters=input_dims[2], kernel_size=(3, 3), padding='same',
-                activation='sigmoid')(x)
-
-    decoder = keras.Model(inputs=decoder_input, outputs=x)
+    latent_input = keras.Input(shape=latent_dims)
+    x = latent_input
+    for f in reversed(filters[:-1]):
+        x = keras.layers.Conv2D(f, (3, 3), activation='relu',
+                                padding='same')(x)
+        x = keras.layers.UpSampling2D((2, 2))(x)
+    # Second-to-last layer: match original first encoder filter
+    x = keras.layers.Conv2D(filters[0], (3, 3), activation='relu',
+                            padding='same')(x)
+    x = keras.layers.UpSampling2D((2, 2))(x)
+    # Output layer
+    x = keras.layers.Conv2D(input_dims[2], (3, 3), activation='sigmoid',
+                            padding='same')(x)
+    decoder = keras.Model(inputs=latent_input, outputs=x)
 
     # Autoencoder
     auto_input = keras.Input(shape=input_dims)
