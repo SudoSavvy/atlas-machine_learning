@@ -22,10 +22,8 @@ def tf_idf(sentences, vocab=None):
                 number of sentences and f number of features.
             features (numpy.ndarray): List of features used for embeddings.
     """
-    # Tokenize sentences into lowercase words >= 2 letters
     tokenized = [re.findall(r'\b[a-z]{2,}\b', s.lower()) for s in sentences]
 
-    # Build vocab if None
     if vocab is None:
         vocab = sorted(set(word for sentence in tokenized for word in sentence))
 
@@ -34,34 +32,33 @@ def tf_idf(sentences, vocab=None):
     s = len(sentences)
     f = len(vocab)
 
-    # Initialize TF matrix
     tf = np.zeros((s, f), dtype=float)
 
+    # Compute term frequency with max normalization per sentence
     for i, tokens in enumerate(tokenized):
-        length = len(tokens)
-        if length == 0:
+        if not tokens:
             continue
+        counts = {}
         for word in tokens:
             if word in word_index:
-                tf[i, word_index[word]] += 1
-        tf[i, :] /= length  # Normalize term counts by sentence length
+                counts[word] = counts.get(word, 0) + 1
+        max_count = max(counts.values()) if counts else 1
+        for word, count in counts.items():
+            tf[i, word_index[word]] = count / max_count
 
-    # Compute document frequency (df)
+    # Document frequency
     df = np.zeros(f, dtype=float)
     for j, word in enumerate(vocab):
         df[j] = sum(1 for tokens in tokenized if word in tokens)
 
-    # Compute IDF with no smoothing
-    # Avoid division by zero by assuming df > 0 for all vocab words in sentences
-    # But if df=0 (like "none" in checker), set idf to 0 to avoid div by zero
+    # IDF with base 10 log and no smoothing
     idf = np.zeros(f, dtype=float)
     for j in range(f):
         if df[j] > 0:
-            idf[j] = np.log(s / df[j])
+            idf[j] = np.log10(s / df[j])
         else:
             idf[j] = 0.0
 
-    # Calculate TF-IDF
     embeddings = tf * idf
 
     return embeddings, np.array(vocab)
