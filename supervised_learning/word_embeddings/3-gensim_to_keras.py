@@ -14,9 +14,9 @@ def gensim_to_keras(model):
     Returns:
         tf.keras.layers.Embedding: A trainable Keras Embedding layer.
     """
-    # Sort vocabulary keys to ensure consistent ordering
-    sorted_keys = sorted(model.wv.key_to_index, key=model.wv.key_to_index.get)
-    weights = [model.wv[word] for word in sorted_keys]
+    # Gensim stores vectors in index_to_key order
+    ordered_keys = model.wv.index_to_key
+    weights = [model.wv[word] for word in ordered_keys]
 
     # Convert to tensor
     embedding_matrix = tf.constant(weights, dtype=tf.float32)
