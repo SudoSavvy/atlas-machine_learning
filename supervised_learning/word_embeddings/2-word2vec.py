@@ -1,23 +1,36 @@
 #!/usr/bin/env python3
-"""Train a Word2Vec model using gensim."""
+"""Ok this is where the difficulty spikes
+I'm gonna slam through this the same way I do everything
+Panicking"""
 
 import gensim
 
 
-def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
-                   negative=5, cbow=True, epochs=5, seed=0, workers=1):
-    """Creates and trains a Word2Vec model."""
+def word2vec_model(
+    sentences,
+    vector_size=100,
+    min_count=5,
+    window=5,
+    negative=5,
+    cbow=True,
+    epochs=5,
+    seed=0,
+    workers=1,
+):
+    """I officially have no idea what I'm doing"""
     model = gensim.models.Word2Vec(
+        sentences,
         vector_size=vector_size,
-        window=window,
         min_count=min_count,
-        workers=workers,
-        sg=0 if cbow else 1,
+        window=window,
         negative=negative,
-        seed=seed
+        cbow_mean=cbow,
+        # hs=not cbow,
+        # alpha=0.025,
+        # min_alpha=0.001,
+        seed=seed,
+        workers=workers,
+        epochs=epochs,
     )
-
-    model.build_vocab(sentences)
-    model.train(sentences, total_examples=len(sentences), epochs=epochs)
 
     return model
