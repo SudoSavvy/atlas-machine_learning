@@ -40,12 +40,7 @@ def fasttext_model(
         sg=0 if cbow else 1,
         negative=negative,
         seed=seed,
-        workers=workers
-    )
-
-    model.train(
-        sentences,
-        total_examples=len(sentences),
+        workers=workers,
         epochs=epochs
     )
 
