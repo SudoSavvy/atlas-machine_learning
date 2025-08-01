@@ -18,8 +18,8 @@ def gensim_to_keras(model):
     ordered_keys = model.wv.index_to_key
     weights = [model.wv[word] for word in ordered_keys]
 
-    # Convert to tensor
-    embedding_matrix = tf.constant(weights, dtype=tf.float32)
+    # Use convert_to_tensor for exact float32 precision
+    embedding_matrix = tf.convert_to_tensor(weights, dtype=tf.float32)
     vocab_size, embedding_dim = embedding_matrix.shape
 
     return tf.keras.layers.Embedding(
