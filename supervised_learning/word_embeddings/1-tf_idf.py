@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module to create TF-IDF embeddings from sentences.
+Creates a TF-IDF embedding matrix from sentences.
 """
 
 import numpy as np
@@ -19,11 +19,10 @@ def tf_idf(sentences, vocab=None):
     Returns:
         tuple:
             embeddings (numpy.ndarray): Shape (s, f) TF-IDF matrix where s is
-                the number of sentences and f is the number of features.
-            features (numpy.ndarray): List of features (vocabulary words) used
-                for embeddings.
+                number of sentences and f number of features.
+            features (numpy.ndarray): List of features used for embeddings.
     """
-    # Tokenize sentences (lowercase, words of length >=2)
+    # Tokenize sentences to lowercase words length >= 2
     tokenized = [re.findall(r'\b[a-z]{2,}\b', s.lower()) for s in sentences]
 
     # Build vocab if None
@@ -34,25 +33,24 @@ def tf_idf(sentences, vocab=None):
     s = len(sentences)
     f = len(vocab)
 
-    # Compute term frequency (TF) matrix: counts per sentence
+    # Compute TF matrix: term frequency = count / number of tokens in sentence
     tf = np.zeros((s, f), dtype=float)
     for i, tokens in enumerate(tokenized):
+        length = len(tokens)
         for word in tokens:
             if word in word_index:
                 tf[i, word_index[word]] += 1
-        # Normalize TF by number of tokens in sentence to get frequency
-        if len(tokens) > 0:
-            tf[i, :] /= len(tokens)
+        if length > 0:
+            tf[i, :] /= length
 
-    # Compute document frequency (DF) per term
+    # Compute document frequency: number of sentences containing the term
     df = np.zeros(f, dtype=float)
-    for j in range(f):
-        # Count how many sentences contain vocab[j]
-        df[j] = sum(1 for tokens in tokenized if vocab[j] in tokens)
+    for j, word in enumerate(vocab):
+        df[j] = sum(1 for tokens in tokenized if word in tokens)
 
-    # Compute inverse document frequency (IDF)
-    # Adding 1 to denominator for smoothing to avoid division by zero
-    idf = np.log((s + 1) / (df + 1)) + 1
+    # Compute IDF without smoothing
+    # Avoid division by zero by assuming df[j] > 0 always (words appear at least once)
+    idf = np.log(s / df)
 
     # Compute TF-IDF
     embeddings = tf * idf
