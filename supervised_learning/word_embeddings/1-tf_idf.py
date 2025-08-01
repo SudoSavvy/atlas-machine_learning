@@ -22,7 +22,7 @@ def tf_idf(sentences, vocab=None):
                 number of sentences and f number of features.
             features (numpy.ndarray): List of features used for embeddings.
     """
-    # Tokenize sentences: lowercase and extract words with at least 2 letters
+    # Tokenize sentences
     tokenized = [re.findall(r'\b[a-z]{2,}\b', s.lower()) for s in sentences]
 
     # Build vocabulary if not provided
@@ -36,7 +36,7 @@ def tf_idf(sentences, vocab=None):
 
     tf = np.zeros((s, f), dtype=float)
 
-    # Compute term frequency with max normalization
+    # Term frequency: normalized by max count per sentence
     for i, tokens in enumerate(tokenized):
         counts = {}
         for word in tokens:
@@ -51,7 +51,7 @@ def tf_idf(sentences, vocab=None):
     for j, word in enumerate(vocab):
         df[j] = sum(1 for tokens in tokenized if word in tokens)
 
-    # Smoothed IDF
+    # Smoothed IDF: log10(1 + s / df[j])
     idf = np.zeros(f, dtype=float)
     for j in range(f):
         if df[j] > 0:
@@ -59,7 +59,7 @@ def tf_idf(sentences, vocab=None):
         else:
             idf[j] = 0.0
 
-    # Final TF-IDF matrix
+    # TF-IDF matrix
     embeddings = tf * idf
 
     return embeddings, np.array(vocab)
