@@ -16,7 +16,8 @@ def bag_of_words(sentences, vocab=None):
 
     Returns:
         tuple:
-            embeddings (numpy.ndarray): Shape (s, f) matrix where s is the number
+            embeddings (numpy.ndarray): Shape (s, f) matrix where s is the
+              number
                 of sentences and f is the number of features (vocab words).
             features (numpy.ndarray): List of features (vocab words) used for
                 the embeddings.
