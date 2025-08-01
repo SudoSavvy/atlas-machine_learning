@@ -14,12 +14,17 @@ def gensim_to_keras(model):
     Returns:
         tf.keras.layers.Embedding: A trainable Keras Embedding layer.
     """
-    weights = model.wv.vectors
-    vocab_size, embedding_dim = weights.shape
+    # Sort vocabulary keys to ensure consistent ordering
+    sorted_keys = sorted(model.wv.key_to_index, key=model.wv.key_to_index.get)
+    weights = [model.wv[word] for word in sorted_keys]
+
+    # Convert to tensor
+    embedding_matrix = tf.constant(weights, dtype=tf.float32)
+    vocab_size, embedding_dim = embedding_matrix.shape
 
     return tf.keras.layers.Embedding(
         input_dim=vocab_size,
         output_dim=embedding_dim,
-        weights=[weights],
+        weights=[embedding_matrix],
         trainable=True
     )
