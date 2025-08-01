@@ -1,60 +1,21 @@
 #!/usr/bin/env python3
-"""
-Creates a TF-IDF embedding matrix from sentences.
-"""
+"""Still following that one tutorial
+https://pages.github.rpi.edu/kuruzj/website_introml_rpi/notebooks/08-intro-nlp/03-scikit-learn-text.html
+For reference"""
 
-import numpy as np
-import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def tf_idf(sentences, vocab=None):
-    """
-    Creates a TF-IDF embedding matrix.
+    """Documentation I forgot"""
+    tfid_vec = TfidfVectorizer(vocabulary=vocab)
 
-    Args:
-        sentences (list of str): List of sentences to analyze.
-        vocab (list of str, optional): Vocabulary words to use. If None,
-            all words from sentences are used.
+    tfid_vec.fit(sentences)
 
-    Returns:
-        tuple:
-            embeddings (numpy.ndarray): Shape (s, f) TF-IDF matrix where s is
-                number of sentences and f number of features.
-            features (numpy.ndarray): List of features used for embeddings.
-    """
-    # Tokenize sentences
-    tokenized = [re.findall(r'\b[a-z]{2,}\b', s.lower()) for s in sentences]
+    ret_array = tfid_vec.transform(sentences)
 
-    # Build vocabulary if not provided
-    if vocab is None:
-        vocab = sorted(set(word for sentence in tokenized for word in sentence))
-
-    word_index = {word: idx for idx, word in enumerate(vocab)}
-    s = len(sentences)
-    f = len(vocab)
-
-    tf = np.zeros((s, f), dtype=float)
-
-    # Raw term frequency
-    for i, tokens in enumerate(tokenized):
-        for word in tokens:
-            if word in word_index:
-                tf[i, word_index[word]] += 1
-
-    # Document frequency
-    df = np.zeros(f, dtype=float)
-    for j, word in enumerate(vocab):
-        df[j] = sum(1 for tokens in tokenized if word in tokens)
-
-    # Smoothed IDF
-    idf = np.log(1 + s / (df + 1e-10))  # epsilon to avoid division by zero
-
-    # TF-IDF
-    embeddings = tf * idf
-
-    # L2 normalization
-    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-    norms[norms == 0] = 1  # avoid division by zero
-    embeddings /= norms
-
-    return embeddings, np.array(vocab)
+    # Ok when it comes to this return
+    # I'm actually not sure if I'm supposed to transform it
+    # Lemme check task 0
+    #   No
+    return (ret_array.toarray(), tfid_vec.get_feature_names_out())
