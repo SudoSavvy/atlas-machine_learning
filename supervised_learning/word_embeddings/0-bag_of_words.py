@@ -22,7 +22,6 @@ def bag_of_words(sentences, vocab=None):
             - f is the number of features (words)
         features (list): List of features (words) used for the embeddings
     """
-    # Function to tokenize and normalize words
     def tokenize(text):
         return re.findall(r'\b\w+\b', text.lower())
 
@@ -38,13 +37,13 @@ def bag_of_words(sentences, vocab=None):
     else:
         features = sorted(set(vocab))
 
-    # Initialize the embedding matrix
-    embeddings = np.zeros((len(sentences), len(features)))
+    # Initialize embedding matrix with integer type
+    embeddings = np.zeros((len(sentences), len(features)), dtype=int)
 
-    # Create a word index mapping
+    # Word-to-index mapping
     word_idx = {word: i for i, word in enumerate(features)}
 
-    # Fill in the embedding matrix
+    # Fill the embedding matrix
     for i, tokens in enumerate(tokenized_sentences):
         for word in tokens:
             if word in word_idx:
