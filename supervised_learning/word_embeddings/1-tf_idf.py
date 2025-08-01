@@ -36,15 +36,15 @@ def tf_idf(sentences, vocab=None):
 
     tf = np.zeros((s, f), dtype=float)
 
-    # Term frequency: normalized by max count per sentence
+    # Term frequency: normalized by total word count per sentence
     for i, tokens in enumerate(tokenized):
-        counts = {}
+        total_count = len(tokens)
+        if total_count == 0:
+            continue
         for word in tokens:
             if word in word_index:
-                counts[word] = counts.get(word, 0) + 1
-        max_count = max(counts.values()) if counts else 1
-        for word, count in counts.items():
-            tf[i, word_index[word]] = count / max_count
+                tf[i, word_index[word]] += 1
+        tf[i] /= total_count
 
     # Document frequency
     df = np.zeros(f, dtype=float)
@@ -52,12 +52,7 @@ def tf_idf(sentences, vocab=None):
         df[j] = sum(1 for tokens in tokenized if word in tokens)
 
     # Smoothed IDF: log10(1 + s / df[j])
-    idf = np.zeros(f, dtype=float)
-    for j in range(f):
-        if df[j] > 0:
-            idf[j] = np.log10(1 + s / df[j])
-        else:
-            idf[j] = 0.0
+    idf = np.log10(1 + s / (df + 1e-10))  # small epsilon to avoid division by zero
 
     # TF-IDF matrix
     embeddings = tf * idf
