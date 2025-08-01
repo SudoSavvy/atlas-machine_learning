@@ -12,25 +12,19 @@ def bag_of_words(sentences, vocab=None):
 
     Returns:
         embeddings: numpy.ndarray of shape (s, f)
-        features: list of features used (vocabulary words)
+        features: numpy.ndarray of features used (vocabulary words)
     """
-    tokenized_sentences = [
-        re.findall(r'\b\w+\b', sentence.lower())
-        for sentence in sentences
-    ]
+    tokenized = [re.findall(r'\b\w+\b', s.lower()) for s in sentences]
 
     if vocab is None:
-        unique_words = set()
-        for tokens in tokenized_sentences:
-            unique_words.update(tokens)
-        vocab = sorted(unique_words)
+        vocab = sorted(set(word for tokens in tokenized for word in tokens))
 
-    word_to_index = {word: i for i, word in enumerate(vocab)}
+    word_index = {word: i for i, word in enumerate(vocab)}
     embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
 
-    for i, tokens in enumerate(tokenized_sentences):
-        for token in tokens:
-            if token in word_to_index:
-                embeddings[i, word_to_index[token]] += 1
+    for i, tokens in enumerate(tokenized):
+        for word in tokens:
+            if word in word_index:
+                embeddings[i, word_index[word]] += 1
 
-    return embeddings, vocab
+    return embeddings, np.array(vocab)
