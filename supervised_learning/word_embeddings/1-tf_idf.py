@@ -22,7 +22,7 @@ def tf_idf(sentences, vocab=None):
                 number of sentences and f number of features.
             features (numpy.ndarray): List of features used for embeddings.
     """
-    # Tokenize sentences to lowercase words length >= 2
+    # Tokenize sentences into lowercase words >= 2 letters
     tokenized = [re.findall(r'\b[a-z]{2,}\b', s.lower()) for s in sentences]
 
     # Build vocab if None
@@ -30,29 +30,38 @@ def tf_idf(sentences, vocab=None):
         vocab = sorted(set(word for sentence in tokenized for word in sentence))
 
     word_index = {word: idx for idx, word in enumerate(vocab)}
+
     s = len(sentences)
     f = len(vocab)
 
-    # Compute TF matrix: term frequency = count / number of tokens in sentence
+    # Initialize TF matrix
     tf = np.zeros((s, f), dtype=float)
+
     for i, tokens in enumerate(tokenized):
         length = len(tokens)
+        if length == 0:
+            continue
         for word in tokens:
             if word in word_index:
                 tf[i, word_index[word]] += 1
-        if length > 0:
-            tf[i, :] /= length
+        tf[i, :] /= length  # Normalize term counts by sentence length
 
-    # Compute document frequency: number of sentences containing the term
+    # Compute document frequency (df)
     df = np.zeros(f, dtype=float)
     for j, word in enumerate(vocab):
         df[j] = sum(1 for tokens in tokenized if word in tokens)
 
-    # Compute IDF without smoothing
-    # Avoid division by zero by assuming df[j] > 0 always (words appear at least once)
-    idf = np.log(s / df)
+    # Compute IDF with no smoothing
+    # Avoid division by zero by assuming df > 0 for all vocab words in sentences
+    # But if df=0 (like "none" in checker), set idf to 0 to avoid div by zero
+    idf = np.zeros(f, dtype=float)
+    for j in range(f):
+        if df[j] > 0:
+            idf[j] = np.log(s / df[j])
+        else:
+            idf[j] = 0.0
 
-    # Compute TF-IDF
+    # Calculate TF-IDF
     embeddings = tf * idf
 
     return embeddings, np.array(vocab)
