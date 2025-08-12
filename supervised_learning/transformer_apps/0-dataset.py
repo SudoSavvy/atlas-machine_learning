@@ -1,45 +1,63 @@
 #!/usr/bin/env python3
-"""Dataset class for TED translation with pretrained tokenizers"""
-
+"""Dataset Module"""
 import tensorflow_datasets as tfds
 import transformers
 
-class Dataset:
-    """Loads and tokenizes the TED HRLR translation dataset"""
+
+class Dataset():
+    """Handles loading and preprocessing of a Portuguese-English translation dataset."""
 
     def __init__(self):
-        # Load train and validation splits as supervised tuples (pt, en)
-        self.data_train = tfds.load(
+        """Loads the dataset splits and prepares tokenizers.
+
+        - Downloads and loads the 'ted_hrlr_translate/pt_to_en' dataset.
+        - Separates the training and validation sets.
+        - Creates tokenizers for both Portuguese and English using the training data.
+        - Prints a confirmation message upon successful loading.
+        """
+        # load dataset
+        data, _ = tfds.load(
             'ted_hrlr_translate/pt_to_en',
-            split='train',
-            as_supervised=True
+            as_supervised=True,
+            with_info=True
         )
-        self.data_valid = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='validation',
-            as_supervised=True
+        # separate sets
+        self.data_train = data['train']
+        self.data_valid = data['validation']
+
+        # build tokenizers from training data
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
+            self.data_train
         )
-        # Create tokenizers
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(self.data_train)
+        # print if loaded
         print("Datasets correctly loaded")
 
     def tokenize_dataset(self, data):
-        """Create pretrained tokenizers from Huggingface transformers"""
-        # Portuguese tokenizer (pretrained BERT)
-        tokenizer_pt = transformers.BertTokenizer.from_pretrained(
-            "neuralmind/bert-base-portuguese-cased",
-            do_lower_case=False,
-            use_fast=True,
-            max_len=8192  # large max length
-        )
+        """Creates sub-word tokenizers from the given dataset.
 
-        # English tokenizer (pretrained BERT uncased)
-        tokenizer_en = transformers.BertTokenizer.from_pretrained(
-            "bert-base-uncased",
-            do_lower_case=True,
-            use_fast=True,
-            max_len=8192
-        )
+        Args:
+            data (tf.data.Dataset): Dataset of (Portuguese sentence, English sentence) pairs.
 
-        # The checker expects tokenizers; no need to train new tokenizer since pretrained ones used
+        Returns:
+            tokenizer_pt: Tokenizer trained on Portuguese sentences.
+            tokenizer_en: Tokenizer trained on English sentences.
+
+        Process:
+            - Converts the dataset to iterators of decoded string sentences.
+            - Uses pretrained BERT tokenizers as base models.
+            - Trains new vocabularies on the dataset with a vocabulary size of 8192.
+        """
+        # convert datasets to string iterators
+        pt_corpus = (pt.decode('utf-8') for pt, _ in data.as_numpy_iterator())
+        en_corpus = (en.decode('utf-8') for _, en in data.as_numpy_iterator())
+
+        # initialize and train tokenizers from pretrained models
+        tokenizer_pt = transformers.BertTokenizerFast.from_pretrained(
+            'neuralmind/bert-base-portuguese-cased'
+        ).train_new_from_iterator(pt_corpus, vocab_size=2**13)
+
+        tokenizer_en = transformers.BertTokenizerFast.from_pretrained(
+            'bert-base-uncased'
+        ).train_new_from_iterator(en_corpus, vocab_size=2**13)
+
         return tokenizer_pt, tokenizer_en
