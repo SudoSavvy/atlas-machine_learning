@@ -6,14 +6,10 @@ import transformers
 
 
 class Dataset:
-    """
-    Loads and preps a dataset for machine translation
-    """
+    """Loads and preps TED HRLR Portuguese-English dataset."""
 
     def __init__(self):
-        """
-        Class constructor: loads TED HRLR Portuguese–English dataset
-        """
+        """Load train/validation splits and create tokenizers."""
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='train',
@@ -30,13 +26,8 @@ class Dataset:
 
     def tokenize_dataset(self, data):
         """
-        Creates sub-word tokenizers for our dataset
-
-        Args:
-            data: tf.data.Dataset (pt, en) sentence pairs
-
-        Returns:
-            tokenizer_pt, tokenizer_en
+        Creates sub-word tokenizers using pretrained models.
+        Does NOT trim or alter dataset text — spaces are preserved.
         """
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased'
