@@ -17,27 +17,33 @@ def play(env, Q, max_steps=100):
 
     Returns:
         tuple:
-            - total_reward (float): The total reward collected in the episode.
-            - frames (list[str]): List of rendered environment states.
+            - total_reward (float): Total reward collected in the episode.
+            - frames (list[str]): Rendered environment states.
     """
     state, _ = env.reset()
-    frames = [env.render()]
+    frames = []
     total_reward = 0
 
     for _ in range(max_steps):
-        # Always exploit (no epsilon-greedy here)
         action = np.argmax(Q[state])
+        action_str = {0: "(Left)", 1: "(Down)", 2: "(Right)", 3: "(Up)"}[action]
 
         # Take step
         next_state, reward, terminated, truncated, _ = env.step(action)
-
-        # Track reward and render state
         total_reward += reward
-        frames.append(env.render())
+
+        # Render and print
+        rendered = env.render()
+        frames.append(rendered)
+        print(rendered, action_str)
 
         state = next_state
-
         if terminated or truncated:
             break
+
+    # Print final state
+    final_render = env.render()
+    frames.append(final_render)
+    print(final_render)
 
     return total_reward, frames
