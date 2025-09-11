@@ -1,103 +1,55 @@
-# reinforcement_learning/deep_q_learning/play.py
+# play.py
+# Patch keras-rl2 for Keras 3 — MUST be at the top
+import tensorflow.keras.models
+tensorflow.keras.models.model_from_config = tensorflow.keras.models.model_from_json
+
+# Imports
 import gymnasium as gym
-import numpy as np
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
+from gymnasium.wrappers import AtariPreprocessing
+from gymnasium.wrappers.frame_stack import FrameStack
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten
 from rl.agents.dqn import DQNAgent
-from rl.memory import SequentialMemory
 from rl.policy import GreedyQPolicy
+from rl.memory import SequentialMemory
+import time
 
-from gymnasium.wrappers import AtariPreprocessing, FrameStack
+# Environment setup
+env = gym.make("ALE/Breakout-v5", render_mode="human")  # Opens a window locally
+env = AtariPreprocessing(env, grayscale_obs=True, scale_obs=True)
+env = FrameStack(env, num_stack=4)
 
-# Use same image data format as training
-keras.backend.set_image_data_format('channels_first')
+nb_actions = env.action_space.n
+input_shape = env.observation_space.shape
 
-class GymnasiumToGymWrapper(gym.Wrapper):
-    def reset(self, **kwargs):
-        obs, info = self.env.reset(**kwargs)
-        return obs
+# Model setup — must match training
+model = Sequential([
+    Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=input_shape),
+    Conv2D(64, (4, 4), strides=(2, 2), activation='relu'),
+    Conv2D(64, (3, 3), activation='relu'),
+    Flatten(),
+    Dense(512, activation='relu'),
+    Dense(nb_actions, activation='linear')
+])
 
-    def step(self, action):
-        obs, reward, terminated, truncated, info = self.env.step(action)
-        done = bool(terminated or truncated)
-        return obs, reward, done, info
+# DQN Agent setup
+memory = SequentialMemory(limit=1000000, window_length=1)  # window_length=1 for playing
+policy = GreedyQPolicy()
+dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory,
+               nb_steps_warmup=0, target_model_update=1e-2,
+               policy=policy, gamma=0.99)
 
-    def render(self, mode='human'):
-        try:
-            return self.env.render()
-        except TypeError:
-            return self.env.render(mode=mode)
+dqn.compile(optimizer=None)
+dqn.load_weights("policy.h5")
 
-def make_env(env_id=None):
-    candidates = [env_id] if env_id else [
-        "ALE/Breakout-v5",
-        "BreakoutNoFrameskip-v4",
-        "Breakout-v0",
-    ]
-    last_exc = None
-    for cid in candidates:
-        if cid is None:
-            continue
-        try:
-            env = gym.make(cid, render_mode="human")  # request human render mode if supported
-            print(f"Created environment: {cid}")
-            return env
-        except Exception as e:
-            last_exc = e
-    raise RuntimeError(f"Could not create Breakout environment. Last exception: {last_exc}")
+# Play loop
+obs, _ = env.reset()
+done = False
+while not done:
+    action = dqn.forward(obs)
+    obs, reward, terminated, truncated, _ = env.step(action)
+    done = terminated or truncated
+    time.sleep(0.01)  # small delay to slow down gameplay
 
-def build_model(input_shape, nb_actions, window_length=4):
-    # Build same architecture used during training
-    model = keras.models.Sequential()
-    model.add(layers.InputLayer(input_shape=(window_length,)+input_shape))
-    model.add(layers.Conv2D(32, kernel_size=(8,8), strides=(4,4), activation='relu', data_format='channels_first'))
-    model.add(layers.Conv2D(64, kernel_size=(4,4), strides=(2,2), activation='relu', data_format='channels_first'))
-    model.add(layers.Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu', data_format='channels_first'))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(512, activation='relu'))
-    model.add(layers.Dense(nb_actions, activation='linear'))
-    return model
-
-def main():
-    ENV_ID = None
-    WINDOW_LENGTH = 4
-    WEIGHTS_FILENAME = "policy.h5"
-
-    base_env = make_env(ENV_ID)
-    env = AtariPreprocessing(base_env, grayscale_obs=True, scale_obs=False, frame_skip=1, noop_max=30)
-    env = FrameStack(env, num_stack=WINDOW_LENGTH)
-    env = GymnasiumToGymWrapper(env)
-
-    nb_actions = env.action_space.n
-    sample_obs = env.reset()
-    obs_shape = sample_obs.shape  # e.g. (4,84,84)
-    if len(obs_shape) == 3:
-        window_len = obs_shape[0]
-        height = obs_shape[1]
-        width = obs_shape[2]
-    else:
-        raise RuntimeError(f"Unexpected observation shape: {obs_shape}")
-
-    # Build the model (architecture must match training)
-    model = build_model(input_shape=(height, width), nb_actions=nb_actions, window_length=WINDOW_LENGTH)
-
-    # Memory & Greedy policy for play
-    memory = SequentialMemory(limit=1000000, window_length=WINDOW_LENGTH)
-    policy = GreedyQPolicy()  # greedy during play
-
-    dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=0,
-                   target_model_update=1e-3, policy=policy)
-    dqn.compile(keras.optimizers.Adam(learning_rate=0.0001), metrics=['mae'])
-
-    # Load weights saved by train.py
-    print(f"Loading weights from {WEIGHTS_FILENAME} ...")
-    dqn.load_weights(WEIGHTS_FILENAME)
-
-    # Run episodes and visualize
-    print("Running test episodes with GreedyQPolicy...")
-    # nb_episodes controls how many games to play; set to desired number
-    dqn.test(env, nb_episodes=5, visualize=True)
-
-if __name__ == "__main__":
-    main()
+env.close()
+print("Playback finished!")
