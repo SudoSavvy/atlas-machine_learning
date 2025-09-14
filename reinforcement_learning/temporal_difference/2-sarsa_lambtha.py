@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SARSA(λ) Value Estimation using Eligibility Traces"""
+"""SARSA(λ) Value Estimation using Replacing Eligibility Traces"""
 
 import numpy as np
 
@@ -14,13 +14,13 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
     - env: The environment instance.
     - Q: A numpy.ndarray of shape (s, a) containing the Q-table.
     - lambtha: The eligibility trace factor (λ).
-    - episodes: Total number of episodes to train over (default: 5000).
-    - max_steps: Maximum number of steps per episode (default: 100).
-    - alpha: Learning rate (default: 0.1).
-    - gamma: Discount rate (default: 0.99).
-    - epsilon: Initial threshold for epsilon-greedy policy (default: 1).
-    - min_epsilon: Minimum value for epsilon after decay (default: 0.1).
-    - epsilon_decay: Rate at which epsilon decays per episode (default: 0.05).
+    - episodes: Total number of episodes to train over.
+    - max_steps: Maximum number of steps per episode.
+    - alpha: Learning rate.
+    - gamma: Discount rate.
+    - epsilon: Initial threshold for epsilon-greedy policy.
+    - min_epsilon: Minimum value for epsilon after decay.
+    - epsilon_decay: Rate at which epsilon decays per episode.
 
     Returns:
     - Q: The updated Q-table.
@@ -31,6 +31,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         state = env.reset()[0]
         eligibility = np.zeros_like(Q)
 
+        # Epsilon-greedy action selection
         if np.random.uniform() < epsilon:
             action = np.random.randint(n_actions)
         else:
@@ -46,8 +47,9 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
 
             delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
 
+            # Replacing trace
             eligibility *= gamma * lambtha
-            eligibility[state, action] += 1
+            eligibility[state, action] = 1
 
             Q += alpha * delta * eligibility
 
@@ -57,6 +59,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
             state = next_state
             action = next_action
 
+        # Decay epsilon after each episode
         epsilon = max(min_epsilon, epsilon * (1 - epsilon_decay))
 
     return Q
