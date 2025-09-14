@@ -1,43 +1,23 @@
 #!/usr/bin/env python3
 import numpy as np
+import gym
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
-    """
-    Performs the Monte Carlo algorithm to update the value function V.
+# Create the FrozenLake8x8 environment with slippery transitions
+env = gym.make("FrozenLake8x8-v1", is_slippery=True)
+env.reset(seed=1)
 
-    Args:
-        env: the environment instance
-        V (np.ndarray): shape (s,) containing the value estimates
-        policy (function): function that takes in a state and returns an action
-        episodes (int): total number of episodes to run
-        max_steps (int): maximum number of steps per episode
-        alpha (float): learning rate
-        gamma (float): discount factor
+# Initialize value function
+V = np.zeros(env.observation_space.n)
 
-    Returns:
-        np.ndarray: the updated value estimates
-    """
-    for ep in range(episodes):
-        state = env.reset()
-        if isinstance(state, tuple):  # handle (obs, info)
-            state = state[0]
+# Define a simple deterministic policy (e.g., always go right)
+def policy(state):
+    return 2  # action 2 = RIGHT
 
-        episode = []
+# Import your Monte Carlo function
+from monte_carlo import monte_carlo
 
-        for _ in range(max_steps):
-            action = policy(state)
-            next_state, reward, done, *_ = env.step(action)
-            episode.append((state, reward))
-            state = next_state
-            if done:
-                break
+# Run Monte Carlo value estimation
+V = monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99)
 
-        G = 0
-        visited = set()
-        for state, reward in reversed(episode):
-            G = reward + gamma * G
-            if state not in visited:
-                visited.add(state)
-                V[state] += alpha * (G - V[state])
-
-    return V
+# Reshape and print the value function as a grid
+print(np.round(V.reshape((8, 8)), 4))
