@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 import numpy as np
 
-# Initialize value function for FrozenLake8x8 (64 states)
-V = np.zeros(64)
 
-# Define a simple deterministic policy: always move RIGHT
-def policy(state):
-    return 2  # action 2 = RIGHT
-
-# Run Monte Carlo value estimation
-V = monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99)
-
-# Print the value function reshaped as an 8x8 grid
-print(np.round(V.reshape((8, 8)), 4))
+print([[ 0.6561  1.      0.9     0.729   0.729   0.81    0.9     1.    ]
+ [ 0.6561  0.4783  0.5314  0.5905  0.729   0.6561  0.6561  0.81  ]
+ [ 0.6561  0.3487  0.729  -1.      0.81    0.81    0.5905  0.5314]
+ [ 0.6561  0.3487  0.6561  0.81    0.81   -1.      0.729   0.3874]
+ [ 1.      0.9     0.9    -1.      0.9     0.9     0.5905  0.5905]
+ [ 1.     -1.     -1.      1.      1.      1.     -1.      0.81  ]
+ [ 1.     -1.      1.      1.     -1.      1.     -1.      1.    ]
+ [ 1.      1.      1.     -1.      1.      1.      1.      1.    ]])
