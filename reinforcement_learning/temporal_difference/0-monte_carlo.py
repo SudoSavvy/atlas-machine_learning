@@ -1,12 +1,35 @@
 #!/usr/bin/env python3
+
 import numpy as np
 
 
-print([[ 0.6561  1.      0.9     0.729   0.729   0.81    0.9     1.    ]
- [ 0.6561  0.4783  0.5314  0.5905  0.729   0.6561  0.6561  0.81  ]
- [ 0.6561  0.3487  0.729  -1.      0.81    0.81    0.5905  0.5314]
- [ 0.6561  0.3487  0.6561  0.81    0.81   -1.      0.729   0.3874]
- [ 1.      0.9     0.9    -1.      0.9     0.9     0.5905  0.5905]
- [ 1.     -1.     -1.      1.      1.      1.     -1.      0.81  ]
- [ 1.     -1.      1.      1.     -1.      1.     -1.      1.    ]
- [ 1.      1.      1.     -1.      1.      1.      1.      1.    ]])
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
+                alpha=0.1, gamma=0.99):
+    
+    returns = {state: [] for state in range(episodes)}
+
+    for i in range(episodes):
+        state = env.reset()[0]
+        episode = []
+        terminated = False
+        truncated = False
+        step_counter = 0
+
+        while not terminated and not truncated:
+
+            action = policy(state)
+
+            new_state, reward, terminated, truncated, _ = env.step(action)
+
+            episode.append((state, reward))
+            if terminated:
+                break
+            state = new_state
+
+        G = 0
+        for state, reward in reversed(episode):
+            G = gamma * G + reward
+            returns[state].append(G)
+            V[state] = np.mean(returns[state])
+
+    return V
