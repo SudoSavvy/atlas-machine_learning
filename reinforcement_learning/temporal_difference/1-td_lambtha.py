@@ -12,7 +12,8 @@ def td_lambtha(env, V, policy, lambtha, episodes=5000,
     Parameters:
     - env: The environment instance.
     - V: A numpy.ndarray of shape (s,) containing the value estimate.
-    - policy: A function that takes in a state and returns the next action to take.
+    - policy: A function that takes in a state and returns the next
+      action to take.
     - lambtha: The eligibility trace factor (λ).
     - episodes: Total number of episodes to train over (default: 5000).
     - max_steps: Maximum number of steps per episode (default: 100).
