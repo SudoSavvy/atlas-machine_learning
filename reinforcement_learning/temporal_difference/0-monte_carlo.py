@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.9):
     """
     Performs the Monte Carlo algorithm to update the value function V.
 
@@ -19,24 +19,24 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0
     """
     for _ in range(episodes):
         state = env.reset()
-        episode = []  # stores (state, reward) pairs
+        episode = []  # store (state, reward) pairs
 
-        # Generate one episode following the policy
+        # generate an episode
         for _ in range(max_steps):
             action = policy(state)
-            new_state, reward, done, _ = env.step(action)
+            next_state, reward, done, _ = env.step(action)
             episode.append((state, reward))
-            state = new_state
+            state = next_state
             if done:
                 break
 
-        # Compute returns G and update V for each state visited
+        # compute return G and update values
         G = 0
         visited = set()
         for state, reward in reversed(episode):
             G = reward + gamma * G
-            if state not in visited:
+            if state not in visited:  # first-visit MC
                 visited.add(state)
-                V[state] = V[state] + alpha * (G - V[state])
+                V[state] += alpha * (G - V[state])
 
     return V
