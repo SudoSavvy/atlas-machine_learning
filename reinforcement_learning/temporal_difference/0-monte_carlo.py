@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 import numpy as np
-import gym
-
-# Create the FrozenLake8x8 environment with slippery transitions
-env = gym.make("FrozenLake8x8-v1", is_slippery=True)
-env.reset(seed=1)
 
 # Initialize value function
-V = np.zeros(env.observation_space.n)
+V = np.zeros(64)  # 8x8 FrozenLake has 64 states
 
 # Define a simple deterministic policy (e.g., always go right)
 def policy(state):
