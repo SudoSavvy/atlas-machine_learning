@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
 import numpy as np
 
+policy = __import__('policy_gradient').policy  # reuse the previous policy function
 
-def policy(matrix, weight):
+
+def policy_gradient(state, weight):
     """
-    Computes the policy (action probabilities) using a weight matrix.
+    Computes the Monte-Carlo policy gradient.
 
     Args:
-        matrix (np.ndarray): shape (1, n), the state input
-        weight (np.ndarray): shape (n, m), the weights of the policy network
+        state (np.ndarray): shape (4,), current observation of the environment
+        weight (np.ndarray): shape (4, 2), weight matrix
 
     Returns:
-        np.ndarray: shape (1, m), action probabilities after softmax
+        action (int): chosen action (0 or 1)
+        gradient (np.ndarray): same shape as weight, gradient of log-probability
     """
-    # Linear transformation
-    z = np.matmul(matrix, weight)
+    # Ensure state is a row vector
+    state = state.reshape(1, -1)
 
-    # Softmax for numerical stability
-    z_exp = np.exp(z - np.max(z))  # subtract max for stability
-    softmax = z_exp / np.sum(z_exp, axis=1, keepdims=True)
+    # Compute probabilities using the policy
+    probs = policy(state, weight)
 
-    return softmax
+    # Choose action based on probabilities
+    action = np.random.choice(len(probs[0]), p=probs[0])
+
+    # Compute gradient of log π(a|s)
+    one_hot = np.zeros_like(probs)
+    one_hot[0, action] = 1
+
+    grad = np.matmul(state.T, (one_hot - probs))
+
+    return action, grad
