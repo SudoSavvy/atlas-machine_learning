@@ -13,7 +13,8 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
         nb_episodes (int): number of episodes for training
         alpha (float): learning rate
         gamma (float): discount factor
-        show_result (bool): if True, renders the environment every 1000 episodes
+        show_result (bool): if True, renders the environment every 1000
+          episodes
 
     Returns:
         list: total rewards (scores) for each episode
