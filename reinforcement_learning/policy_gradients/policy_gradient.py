@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 import numpy as np
 
-policy = __import__('policy_gradient').policy  # reuse the previous policy function
+
+def policy(state, weight):
+    """
+    Computes a softmax policy given a state and a weight matrix.
+
+    Args:
+        state (np.ndarray): shape (1, n), current state (row vector)
+        weight (np.ndarray): shape (n, m), weight matrix
+
+    Returns:
+        np.ndarray: shape (1, m), probabilities for each action
+    """
+    z = np.matmul(state, weight)
+    exp = np.exp(z - np.max(z))  # numerical stability
+    return exp / np.sum(exp, axis=1, keepdims=True)
 
 
 def policy_gradient(state, weight):
@@ -9,26 +23,27 @@ def policy_gradient(state, weight):
     Computes the Monte-Carlo policy gradient.
 
     Args:
-        state (np.ndarray): shape (4,), current observation of the environment
-        weight (np.ndarray): shape (4, 2), weight matrix
+        state (np.ndarray): shape (n,), current observation
+        weight (np.ndarray): shape (n, m), weight matrix
 
     Returns:
-        action (int): chosen action (0 or 1)
-        gradient (np.ndarray): same shape as weight, gradient of log-probability
+        action (int): chosen action index
+        gradient (np.ndarray): gradient of log-probability, shape (n, m)
     """
-    # Ensure state is a row vector
+    # Ensure state is 2D row vector
     state = state.reshape(1, -1)
 
-    # Compute probabilities using the policy
+    # Get action probabilities
     probs = policy(state, weight)
 
-    # Choose action based on probabilities
-    action = np.random.choice(len(probs[0]), p=probs[0])
+    # Sample action based on probabilities
+    action = np.random.choice(probs.shape[1], p=probs[0])
 
-    # Compute gradient of log π(a|s)
+    # One-hot encode chosen action
     one_hot = np.zeros_like(probs)
     one_hot[0, action] = 1
 
-    grad = np.matmul(state.T, (one_hot - probs))
+    # Gradient: state.T * (one_hot - probs)
+    grad = np.matmul(state.T, one_hot - probs)
 
     return action, grad
