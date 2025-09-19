@@ -1,67 +1,67 @@
 #!/usr/bin/env python3
 import numpy as np
-
 policy_gradient = __import__('policy_gradient').policy_gradient
 
 
 def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
     """
-    Implements a Monte-Carlo policy gradient (REINFORCE) training loop.
+    Trains a policy using REINFORCE with the given environment.
 
-    Args:
-        env: OpenAI Gym-like environment
-        nb_episodes (int): number of episodes for training
-        alpha (float): learning rate
-        gamma (float): discount factor
-
-    Returns:
-        list: total rewards (scores) for each episode
+    env: the initial environment
+    nb_episodes: number of episodes used for training
+    alpha: learning rate
+    gamma: discount factor
+    Returns: a list containing the score for each episode
     """
-    # Initialize random weights: (obs_space, action_space)
-    weight = np.random.rand(env.observation_space.shape[0],
-                            env.action_space.n)
+    # Extract input and output dimensions from environment
+    n_obs = env.observation_space.shape[0]
+    n_actions = env.action_space.n
+
+    # Initialize theta (policy parameters)
+    theta = np.random.rand(n_obs, n_actions)
 
     scores = []
 
     for episode in range(nb_episodes):
         state, _ = env.reset()
-        done = False
-        episode_states = []
-        episode_actions = []
-        episode_rewards = []
+        grads = []
+        rewards = []
         score = 0
 
-        # Run an episode
+        # Generate an episode
+        done = False
         while not done:
-            action, grad = policy_gradient(state, weight)
+            probs = softmax(np.dot(state, theta))
+            action = np.random.choice(n_actions, p=probs)
+            next_state, reward, done, truncated, _ = env.step(action)
 
-            next_state, reward, terminated, truncated, _ = env.step(action)
-            done = terminated or truncated
-
-            episode_states.append(state)
-            episode_actions.append(grad)
-            episode_rewards.append(reward)
+            # Get gradient from policy_gradient
+            grad = policy_gradient(state, theta, action)
+            grads.append(grad)
+            rewards.append(reward)
             score += reward
             state = next_state
 
-        # Compute returns (G) for each step
-        G = 0
-        returns = []
-        for r in reversed(episode_rewards):
-            G = r + gamma * G
-            returns.insert(0, G)
+        # Compute discounted rewards
+        G = np.zeros_like(rewards)
+        running_sum = 0
+        for t in reversed(range(len(rewards))):
+            running_sum = running_sum * gamma + rewards[t]
+            G[t] = running_sum
+        G = (G - np.mean(G)) / (np.std(G) + 1e-8)
 
-        returns = np.array(returns)
-
-        # Normalize returns for stability
-        if np.std(returns) > 0:
-            returns = (returns - np.mean(returns)) / (np.std(returns) + 1e-8)
-
-        # Update weights using gradients
-        for grad, Gt in zip(episode_actions, returns):
-            weight += alpha * grad * Gt
+        # Update theta
+        for t in range(len(grads)):
+            theta += alpha * grads[t] * G[t]
 
         scores.append(score)
-        print(f"Episode: {episode} Score: {score}")
+        print("Episode: {} Score: {}".format(episode, score))
 
     return scores
+
+
+def softmax(x):
+    """Numerically stable softmax"""
+    x = x - np.max(x)
+    e = np.exp(x)
+    return e / e.sum()
