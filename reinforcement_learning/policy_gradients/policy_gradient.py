@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 def policy(matrix, weight):
     """
     Computes the policy (action probabilities) using a weight matrix.
