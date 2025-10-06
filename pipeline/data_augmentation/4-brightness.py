@@ -2,7 +2,8 @@
 """
 change_brightness.py
 
-This module defines a function to randomly adjust the brightness of a 3D image tensor using TensorFlow.
+This module defines a function to randomly adjust the brightness of a 3D image
+ tensor using TensorFlow.
 """
 
 import tensorflow as tf
