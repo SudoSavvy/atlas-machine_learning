@@ -2,7 +2,8 @@
 """
 flip_image.py
 
-This module defines a function to flip a 3D image tensor horizontally using TensorFlow.
+This module defines a function to flip a 3D image tensor horizontally using
+ TensorFlow.
 """
 
 import tensorflow as tf
