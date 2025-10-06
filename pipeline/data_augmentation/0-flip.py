@@ -2,12 +2,7 @@
 """
 flip_image.py
 
-This module provides a function to flip a 3D image tensor horizontally using TensorFlow.
-
-Requirements:
-- Only TensorFlow may be imported.
-- Must pass pycodestyle validation.
-- Output must match the main file example.
+This module defines a function to flip a 3D image tensor horizontally using TensorFlow.
 """
 
 import tensorflow as tf
@@ -15,12 +10,13 @@ import tensorflow as tf
 
 def flip_image(image):
     """
-    Flip a 3D image tensor horizontally.
+    Flips a 3D image tensor horizontally.
 
     Args:
-        image (tf.Tensor): A 3D tensor representing an image (height, width, channels).
+        image (tf.Tensor): A 3D TensorFlow tensor representing an image
+                           with shape (height, width, channels).
 
     Returns:
-        tf.Tensor: The horizontally flipped image tensor.
+        tf.Tensor: A horizontally flipped image tensor.
     """
     return tf.image.flip_left_right(image)
