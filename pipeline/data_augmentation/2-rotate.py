@@ -2,7 +2,8 @@
 """
 rotate_image.py
 
-This module defines a function to rotate a 3D image tensor by 90 degrees counter-clockwise using TensorFlow.
+This module defines a function to rotate a 3D image tensor by 90 degrees
+ counter-clockwise using TensorFlow.
 """
 
 import tensorflow as tf
