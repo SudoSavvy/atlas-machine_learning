@@ -2,7 +2,8 @@
 """
 crop_image.py
 
-This module defines a function to perform a random crop on a 3D image tensor using TensorFlow.
+This module defines a function to perform a random crop on a 3D image
+ tensor using TensorFlow.
 """
 
 import tensorflow as tf
