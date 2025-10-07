@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import tensorflow as tf
 
+
 def change_hue(image, delta):
     """
     Changes the hue of an image by a specified delta.
