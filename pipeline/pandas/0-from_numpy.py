@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+"""
+This module defines a function that converts a NumPy ndarray into a pandas DataFrame.
+The DataFrame columns are labeled alphabetically from 'A' to 'Z'.
+"""
+
 import pandas as pd
-"""
-Documetnation for checker
-"""
 
 
 def from_numpy(array):
