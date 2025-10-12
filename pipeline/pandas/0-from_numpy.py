@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pandas as pd
 
+
 def from_numpy(array):
     """
     Creates a pandas DataFrame from a NumPy ndarray.
