@@ -12,9 +12,11 @@ def array(df):
     from the given DataFrame and converts them into a NumPy ndarray.
 
     Parameters:
-    df (pd.DataFrame): A pandas DataFrame containing 'High' and 'Close' columns.
+    df (pd.DataFrame): A pandas DataFrame containing 'High' and
+      'Close' columns.
 
     Returns:
-    numpy.ndarray: A NumPy array containing the last 10 rows of the selected columns.
+    numpy.ndarray: A NumPy array containing the last 10 rows of
+      the selected columns.
     """
     return df[['High', 'Close']].tail(10).to_numpy()
