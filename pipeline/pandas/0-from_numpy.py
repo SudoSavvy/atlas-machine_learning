@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import pandas as pd
-
+"""
+Documetnation for checker
+"""
 
 def from_numpy(array):
     """
