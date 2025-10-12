@@ -4,6 +4,7 @@ import pandas as pd
 Documetnation for checker
 """
 
+
 def from_numpy(array):
     """
     Creates a pandas DataFrame from a NumPy ndarray.
