@@ -6,6 +6,7 @@ into a pandas DataFrame using a specified delimiter.
 
 import pandas as pd
 
+
 def from_file(filename, delimiter):
     """
     Loads data from a file into a pandas DataFrame.
