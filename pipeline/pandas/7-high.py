@@ -4,6 +4,7 @@ This module defines a function that sorts a pandas DataFrame
 by the 'High' column in descending order.
 """
 
+
 def high(df):
     """
     Sorts the DataFrame by the 'High' column in descending order.
