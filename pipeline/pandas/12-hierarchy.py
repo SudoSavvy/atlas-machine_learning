@@ -34,8 +34,7 @@ def hierarchy(df1, df2):
     df2_filtered = df2.loc[1417411980:1417417980]
 
     # Concatenate with keys
-    combined = pd.concat([df2_filtered, df1_filtered], keys=['bitstamp',
-                                                              'coinbase'])
+    combined = pd.concat([df2_filtered, df1_filtered], keys=['bitstamp','coinbase'])
 
     # Swap MultiIndex levels so Timestamp is first
     combined = combined.swaplevel(0, 1)
