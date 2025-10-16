@@ -19,7 +19,8 @@ def fill(df):
                        'Volume_(BTC)', and 'Volume_(Currency)'.
 
     Returns:
-    pd.DataFrame: The modified DataFrame with missing values handled as specified.
+    pd.DataFrame: The modified DataFrame with missing values handled as
+      specified.
     """
     if 'Weighted_Price' in df.columns:
         df = df.drop(columns=['Weighted_Price'])
