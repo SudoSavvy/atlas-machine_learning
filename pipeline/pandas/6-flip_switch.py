@@ -14,7 +14,7 @@ def flip_switch(df):
       column.
 
     Returns:
-    pd.DataFrame: The transposed DataFrame after sorting in reverse 
+    pd.DataFrame: The transposed DataFrame after sorting in reverse
     chronological order.
     """
     df_sorted = df.sort_index(ascending=False)
