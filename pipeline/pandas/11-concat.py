@@ -20,7 +20,8 @@ def concat(df1, df2):
         df2 (pd.DataFrame): The bitstamp DataFrame.
 
     Returns:
-        pd.DataFrame: A concatenated DataFrame with keys 'bitstamp' and 'coinbase'.
+        pd.DataFrame: A concatenated DataFrame with keys 'bitstamp' and
+          'coinbase'.
     """
     # Index both DataFrames using the provided index function
     df1 = index(df1)
