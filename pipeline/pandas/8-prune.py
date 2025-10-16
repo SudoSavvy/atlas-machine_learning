@@ -4,6 +4,7 @@ This module defines a function that removes rows from a pandas DataFrame
 where the 'Close' column contains NaN values.
 """
 
+
 def prune(df):
     """
     Removes rows from the DataFrame where the 'Close' column has NaN values.
