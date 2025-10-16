@@ -6,7 +6,7 @@ DataFrame and selects every 60th row from those columns.
 
 def slice(df):
     """
-    Extracts the 'High', 'Low', 'Close', and 'Volume_BTC' columns from the
+    Extracts the 'High', 'Low', 'Close', and 'Volume_(BTC)' columns from the
     given DataFrame and returns every 60th row from those columns.
 
     Parameters:
@@ -15,4 +15,4 @@ def slice(df):
     Returns:
     pd.DataFrame: A sliced DataFrame with every 60th row of the selected columns.
     """
-    return df[['High', 'Low', 'Close', 'Volume_BTC']].iloc[::60]
+    return df[['High', 'Low', 'Close', 'Volume_(BTC)']].iloc[::60]
