@@ -6,6 +6,7 @@ for all sentient species listed in the Star Wars API (SWAPI).
 
 import requests
 
+
 def sentientPlanets():
     """
     Retrieve the list of home planet names for all sentient species
