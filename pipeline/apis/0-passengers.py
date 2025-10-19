@@ -6,6 +6,7 @@ that can accommodate a given number of passengers.
 
 import requests
 
+
 def availableShips(passengerCount):
     """
     Retrieve a list of starships from the SWAPI that can hold at least
