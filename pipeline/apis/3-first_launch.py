@@ -1,60 +1,40 @@
 #!/usr/bin/env python3
 """
-This script retrieves and displays the first SpaceX launch from the API response.
-
-It prints:
-<launch name> (<date>) <rocket name> - <launchpad name> (<launchpad locality>)
+This script retrieves the first listed SpaceX launch from the API
+and prints its name, local date, rocket, and launchpad details.
 """
 
 import requests
-from datetime import datetime
-import pytz
 
-
-def get_first_launch():
+def fetch_first_launch():
     """
-    Fetch and format the first SpaceX launch from the API response.
+    Fetches the first launch from the SpaceX API response and formats its details.
 
     Returns:
-        str: Formatted launch string with name, local date, rocket, and launchpad.
+        str: Formatted string with launch name, date, rocket name, and launchpad info.
     """
-    launches_url = 'https://api.spacexdata.com/v4/launches'
-    rockets_url = 'https://api.spacexdata.com/v4/rockets/'
-    launchpads_url = 'https://api.spacexdata.com/v4/launchpads/'
-
+    launches_url = "https://api.spacexdata.com/v4/launches"
     response = requests.get(launches_url)
-    if response.status_code != 200:
-        return 'Failed to retrieve launches.'
-
     launches = response.json()
-    first = launches[0]
 
-    launch_name = first.get('name')
-    date_utc = first.get('date_utc')
-    rocket_id = first.get('rocket')
-    launchpad_id = first.get('launchpad')
+    first_launch = launches[0]  # Do not sort — use first in API response
 
-    # Convert UTC date to local time with timezone offset
-    utc_dt = datetime.fromisoformat(date_utc.replace('Z', '+00:00'))
-    local_dt = utc_dt.astimezone()
-    formatted_date = local_dt.isoformat()
+    rocket_id = first_launch["rocket"]
+    rocket_url = f"https://api.spacexdata.com/v4/rockets/{rocket_id}"
+    rocket_response = requests.get(rocket_url)
+    rocket_name = rocket_response.json()["name"]
 
-    # Get rocket name
-    rocket_response = requests.get(rockets_url + rocket_id)
-    rocket_name = rocket_response.json().get('name') if rocket_response.status_code == 200 else 'Unknown Rocket'
+    launchpad_id = first_launch["launchpad"]
+    launchpad_url = f"https://api.spacexdata.com/v4/launchpads/{launchpad_id}"
+    launchpad_response = requests.get(launchpad_url)
+    launchpad_data = launchpad_response.json()
+    launchpad_name = launchpad_data["name"]
+    launchpad_locality = launchpad_data["locality"]
 
-    # Get launchpad name and locality
-    pad_response = requests.get(launchpads_url + launchpad_id)
-    if pad_response.status_code == 200:
-        pad_data = pad_response.json()
-        pad_name = pad_data.get('name', 'Unknown Pad')
-        pad_locality = pad_data.get('locality', 'Unknown Location')
-    else:
-        pad_name = 'Unknown Pad'
-        pad_locality = 'Unknown Location'
+    launch_name = first_launch["name"]
+    launch_date = first_launch["date_local"]
 
-    return f"{launch_name} ({formatted_date}) {rocket_name} - {pad_name} ({pad_locality})"
+    return f"{launch_name} ({launch_date}) {rocket_name} - {launchpad_name} ({launchpad_locality})"
 
-
-if __name__ == '__main__':
-    print(get_first_launch())
+if __name__ == "__main__":
+    print(fetch_first_launch())
