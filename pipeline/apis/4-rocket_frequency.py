@@ -8,6 +8,7 @@ If multiple rockets have the same count, they are sorted alphabetically.
 import requests
 from collections import defaultdict
 
+
 def count_launches_per_rocket():
     """
     Fetches launch and rocket data from the SpaceX API and counts launches per rocket.
@@ -45,6 +46,7 @@ def count_launches_per_rocket():
     result.sort(key=lambda x: (-x[1], x[0]))
 
     return result
+
 
 if __name__ == "__main__":
     for rocket_name, count in count_launches_per_rocket():
