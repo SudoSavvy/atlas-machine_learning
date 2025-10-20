@@ -55,5 +55,6 @@ def get_first_launch():
 
     return f"{launch_name} ({formatted_date}) {rocket_name} - {pad_name} ({pad_locality})"
 
+
 if __name__ == '__main__':
     print(get_first_launch())
