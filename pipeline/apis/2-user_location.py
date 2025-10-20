@@ -36,6 +36,7 @@ def get_user_location(url):
         return data.get('location', 'No location provided')
     return 'Unexpected error'
 
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Usage: ./2-user_location.py <GitHub API URL>")
