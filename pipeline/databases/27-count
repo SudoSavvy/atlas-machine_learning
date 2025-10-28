@@ -1,0 +1,3 @@
+// my comment
+
+print(db.school.countDocuments({}));
